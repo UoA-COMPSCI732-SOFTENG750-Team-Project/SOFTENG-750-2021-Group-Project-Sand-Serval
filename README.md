@@ -1,2 +1,5 @@
-# SOFTENG-750-COMPSCI-732-Group-Project-Sand-Serval
-This is a meeting scheduling webapp for UoA softeng 750/ compsci 732 team project
+# SOFTENG-750-COMPSCI-732 webapp for team meeting scheduling 
+<br>
+This is an web app developed by four students in SOFTENG 750/COMPSCI 732 course at the University of Auckland. <br>
+
+## Temp Break edit later
