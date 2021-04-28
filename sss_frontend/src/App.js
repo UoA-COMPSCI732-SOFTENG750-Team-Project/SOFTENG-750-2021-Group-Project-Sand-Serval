@@ -1,23 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+// import { Switch, Route, Redirect, Link, useLocation } from 'react-router-dom';
+import { AppBar, Typography, CssBaseline, Button, Toolbar } from '@material-ui/core';
+import { Switch, Route, Redirect, BrowserRouter } from 'react-router-dom';
+import Home from './pages/Home'
+import { useContext } from 'react';
+import Footer from './components/Footer';
+import dayjs from 'dayjs';
+import styles from './App.css';
+import { Container } from '@material-ui/core';
 
 function App() {
+
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-    Test
-        </a>
-      </header>
+    <div className="Root">
+      <CssBaseline />
+      <AppBar position="fixed" id="NavBar">
+        <Toolbar>
+          <Typography variant="h6" id="title">
+            SSScheduler
+          </Typography>
+          <Button variant="contained" color="primary">
+            Plan an Event
+          </Button>
+        </Toolbar>
+      </AppBar>
+      
+      <Container maxWidth="lg" id="main">
+        <BrowserRouter>
+          <Switch>
+            <Route path="/">
+              <Home />
+            </Route>
+          </Switch>
+        </BrowserRouter>
+      </Container>
+      
     </div>
   );
 }
