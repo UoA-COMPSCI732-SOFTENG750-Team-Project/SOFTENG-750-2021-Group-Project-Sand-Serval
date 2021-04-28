@@ -1,11 +1,11 @@
 // import { Switch, Route, Redirect, Link, useLocation } from 'react-router-dom';
 import { AppBar, Typography, CssBaseline, Button, Toolbar } from '@material-ui/core';
-import { Switch, Route, Redirect, BrowserRouter } from 'react-router-dom';
+import { Switch, Route, BrowserRouter } from 'react-router-dom';
 import Home from './pages/Home'
-import { useContext } from 'react';
-import Footer from './components/Footer';
-import dayjs from 'dayjs';
-import styles from './App.css';
+// import { useContext } from 'react';
+// import Footer from './components/Footer';
+// import dayjs from 'dayjs';
+import './App.css';
 import { Container } from '@material-ui/core';
 
 function App() {
