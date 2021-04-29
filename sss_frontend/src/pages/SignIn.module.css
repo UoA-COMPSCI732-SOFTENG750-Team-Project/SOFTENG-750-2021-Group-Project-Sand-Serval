@@ -1,0 +1,19 @@
+.signInContainer {
+    display: flex;
+    flex-direction: column;
+
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 30px;
+
+    text-align: center;
+}
+
+.spacing {
+    margin-top: 30px;
+}
+
+.inputGroup * {
+    width: 100%;
+}
