@@ -30,7 +30,7 @@ export default function SignIn() {
                     variant="outlined" />
             </section>
 
-            <Button variant="contained" color="primary" className={styles.spacing}
+            <Button variant="contained" color="primary" className={styles.spacing}>
                 Sign In
             </Button>
         </section>
