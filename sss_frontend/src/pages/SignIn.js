@@ -5,6 +5,18 @@ import styles from "./SignIn.module.css";
 export default function SignIn() {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
+
+    const signIn = () => {
+        fetch("/api/sign-in", {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: "POST",
+            body: JSON.stringify({name, password})
+        })
+    };
+
     return (
         <section className={styles.signInContainer}>
             <Typography variant="h5">Enter your name to see "Event"</Typography>
@@ -30,7 +42,7 @@ export default function SignIn() {
                     variant="outlined" />
             </section>
 
-            <Button variant="contained" color="primary" className={styles.spacing}>
+            <Button variant="contained" color="primary" className={styles.spacing} onClick={signIn}>
                 Sign In
             </Button>
         </section>
