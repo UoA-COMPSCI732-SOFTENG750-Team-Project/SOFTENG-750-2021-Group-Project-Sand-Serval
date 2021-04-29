@@ -22,7 +22,7 @@ export default function SignIn() {
             <Typography variant="h5">Enter your name to see "Event"</Typography>
             <Divider />
 
-            <section className={styles.spacing + " " + styles.inputGroup}>
+            <section className={styles.signInSection}>
                 <InputLabel htmlFor="name"><Typography variant="h6">Name:</Typography></InputLabel>
                 <TextField
                     value={name}
@@ -32,7 +32,7 @@ export default function SignIn() {
                 />
             </section>
 
-            <section className={styles.spacing + " " + styles.inputGroup}>
+            <section className={styles.signInSection}>
                 <InputLabel htmlFor="password"><Typography variant="h6">Password:</Typography></InputLabel>
                 <TextField
                     value={password}
@@ -42,9 +42,11 @@ export default function SignIn() {
                     variant="outlined" />
             </section>
 
-            <Button variant="contained" color="primary" className={styles.spacing} onClick={signIn}>
-                Sign In
-            </Button>
+            <section className={styles.signInSection}>
+                <Button variant="contained" color="primary" onClick={signIn}>
+                    Sign In
+                </Button>
+            </section>
         </section>
     );
 }
