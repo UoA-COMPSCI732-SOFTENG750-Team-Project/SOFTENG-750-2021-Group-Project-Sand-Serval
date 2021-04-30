@@ -28,6 +28,11 @@ router.post('/', async (req, res) => {
             .contentType('text/plain').send('Events must have a name');
         return;
     }
+    if (!req.body.dates) {
+        res.status(HTTP_BAD_REQUEST)
+            .contentType('text/plain').send('Events must have a date');
+        return;
+    }
     const newEvent = await eventsDao.createEvent(req.body);
     res.status(HTTP_CREATED)
         .header('location', `/api/events/${newEvent._id}`)
