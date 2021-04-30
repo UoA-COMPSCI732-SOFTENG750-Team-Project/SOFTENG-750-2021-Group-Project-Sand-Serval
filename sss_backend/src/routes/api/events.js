@@ -9,6 +9,19 @@ const HTTP_BAD_REQUEST = 400;
 
 const router = express.Router();
 
+//Check for valid ObjectId before anything else
+router.use('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    if (mongoose.isValidObjectId(id)) {
+        next();
+    }
+    else {
+        res.status(HTTP_BAD_REQUEST)
+            .contentType('text/plain').send('Invalid ID');
+    }
+});
+
+//Create an event
 router.post('/', async (req, res) => {
     if (!req.body.name) {
         res.status(HTTP_BAD_REQUEST)
@@ -19,8 +32,6 @@ router.post('/', async (req, res) => {
     res.status(HTTP_CREATED)
         .header('location', `/api/events/${newEvent._id}`)
         .json(newEvent);
-
-    res.send("ok")
 });
 
 export default router;
