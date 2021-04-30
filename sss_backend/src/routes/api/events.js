@@ -34,4 +34,16 @@ router.post('/', async (req, res) => {
         .json(newEvent);
 });
 
+//Retrive event
+router.get('/:id', async (req, res) => {
+    const { id } = req.params;
+    const event = await eventsDao.retrieveEvent(id);
+    if (event) {
+        res.json(event);
+    }
+    else {
+        res.sendStatus(HTTP_NOT_FOUND);
+    }
+});
+
 export default router;

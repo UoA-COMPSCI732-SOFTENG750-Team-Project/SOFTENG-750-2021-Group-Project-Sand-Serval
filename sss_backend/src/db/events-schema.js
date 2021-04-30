@@ -8,9 +8,9 @@ const usersSchema = new Schema({
 })
 
 const eventsSchema = new Schema({
-    name: { type: String, required: true},
+    name: {type: String, required: true},
     users: [usersSchema],
-    dates: [Date],
+    dates: [{type: Date, required: true}],
     from: Date,
     to: Date
 })
