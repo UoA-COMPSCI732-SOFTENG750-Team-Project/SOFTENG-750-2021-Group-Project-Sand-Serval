@@ -9,8 +9,3 @@ export async function createEvent(Event) {
 export async function retrieveEvent(id) {
     return await event.findById(id);
 }
-
-export async function addUser(todo) {
-    await dbEvent.save();
-    return dbEvent;
-}
