@@ -1,10 +1,14 @@
 import mongoose from 'mongoose';
-import { usersSchema } from "./users-schema";
 
 const Schema = mongoose.Schema;
 
+const usersSchema = new Schema({
+    _id: {type: Schema.Types.ObjectId, required: true},
+    name: { type: String, required: true},
+    password: String
+})
+
 const eventsSchema = new Schema({
-    _id: {type: ObjectId, required: true},
     name: { type: String, required: true},
     users: [usersSchema],
     dates: [Date],

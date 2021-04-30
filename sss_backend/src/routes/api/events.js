@@ -18,7 +18,9 @@ router.post('/', async (req, res) => {
     const newEvent = await eventsDao.createEvent(req.body);
     res.status(HTTP_CREATED)
         .header('location', `/api/events/${newEvent._id}`)
-        .json(newTodo);
+        .json(newEvent);
+
+    res.send("ok")
 });
 
 export default router;
