@@ -1,6 +1,6 @@
 import express from 'express';
 import path from 'path';
-import mongoose from 'mongoose';
+import connectToDatabase from './db/db-connect';
 
 // Setup Express
 const app = express();
@@ -32,5 +32,5 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Start the DB running. Then, once it's connected, start the server.
-mongoose.connect('mongodb://localhost:27017/scheduler', { useNewUrlParser: true })
+connectToDatabase()
     .then(() => app.listen(port, () => console.log(`App server listening on port ${port}!`)));
