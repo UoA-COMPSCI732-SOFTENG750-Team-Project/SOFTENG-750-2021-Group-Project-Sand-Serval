@@ -1,20 +1,20 @@
 import { Button, Divider, InputLabel, TextField, Typography } from "@material-ui/core";
-import { useState } from 'react';
-import styles from "./SignIn.module.css";
+import { useContext, useState } from 'react';
+import styles from './SignIn.module.css';
+import { AppContext } from '../AppContextProvider';
 
 export default function SignIn() {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
+    const { signIn } = useContext(AppContext);
 
-    const signIn = () => {
-        fetch("/api/sign-in", {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            method: "POST",
-            body: JSON.stringify({name, password})
-        })
+    const extendedSignIn = () => {
+        if (!name) {
+            window.alert('Missing name');
+            return;
+        }
+
+        signIn(name, password).catch(e => window.alert(e.message))
     };
 
     return (
@@ -43,7 +43,7 @@ export default function SignIn() {
             </section>
 
             <section className={styles.signInSection}>
-                <Button variant="contained" color="primary" onClick={signIn}>
+                <Button variant="contained" color="primary" onClick={extendedSignIn}>
                     Sign In
                 </Button>
             </section>

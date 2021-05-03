@@ -2,10 +2,12 @@ import express from 'express';
 import mongoose from 'mongoose';
 import * as eventsDao from '../../db/events-dao';
 
+const HTTP_OK = 200;
 const HTTP_CREATED = 201;
-const HTTP_NOT_FOUND = 404;
 const HTTP_NO_CONTENT = 204;
 const HTTP_BAD_REQUEST = 400;
+const HTTP_FORBIDDEN = 403;
+const HTTP_NOT_FOUND = 404;
 
 const router = express.Router();
 
@@ -49,6 +51,34 @@ router.get('/:id', async (req, res) => {
     else {
         res.sendStatus(HTTP_NOT_FOUND);
     }
+});
+
+router.post('/:id/sign-in', async (req, res) => {
+    const { id } = req.params;
+    const {name, password} = req.body;
+    if (!name) {
+        res.sendStatus(HTTP_BAD_REQUEST);
+        return;
+    }
+
+    const event = await eventsDao.retrieveEvent(id);
+    const dbUser = event.users.find(user => user.name === name);
+    if (!dbUser) {
+        event.users.push({
+            name,
+            password
+        });
+        await event.save();
+    } else {
+        if (dbUser.password && dbUser.password !== password) {
+            res.sendStatus(HTTP_FORBIDDEN);
+            return;
+        }
+    }
+
+    req.session.event = id;
+    req.session.name = name;
+    res.sendStatus(HTTP_OK);
 });
 
 export default router;

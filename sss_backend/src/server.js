@@ -1,4 +1,6 @@
 import express from 'express';
+import session from 'express-session';
+import crypto from 'crypto';
 import path from 'path';
 import connectToDatabase from './db/db-connect';
 
@@ -11,6 +13,10 @@ app.use(express.json());
 app.use(function (req, res, next) {
     next()
 })
+
+// Setup session middleware
+app.use(session({ secret: crypto.randomBytes(48).toString('hex') }));
+
 // Setup our routes.
 import routes from './routes';
 app.use('/', routes);
