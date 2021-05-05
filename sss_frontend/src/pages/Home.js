@@ -11,9 +11,11 @@ export default function Home() {
             </TextField>
             
             <Typography>
-                    Choose Date
-                </Typography>
+                Choose Date
+            </Typography>
+            
             <CalendarPicker />
+
             <Link to={"/sign-in"}>
                 <Button variant="contained" color="primary">
                     Create Event!
