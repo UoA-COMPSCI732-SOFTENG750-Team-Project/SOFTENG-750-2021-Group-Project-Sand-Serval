@@ -1,7 +1,9 @@
 import React, {useContext, useState} from 'react';
 import Paper from '@material-ui/core/Paper';
+import DeleteIcon from '@material-ui/icons/Delete';
 import {EditingState, IntegratedEditing, ViewState} from '@devexpress/dx-react-scheduler';
 import {Appointments, DragDropProvider, Scheduler, WeekView} from '@devexpress/dx-react-scheduler-material-ui';
+import styles from './Timetable.module.css';
 
 const AppContext = React.createContext({
     data: [],
@@ -11,13 +13,14 @@ const AppContext = React.createContext({
 function AppContextProvider({ children }) {
     const [data, setData] = useState([]);
     const [startTime, setStartTime] = useState(null);
+    const [highlight, setHighlight] = useState(null);
     const context = {
         data,
-        setData: data => {
-            console.log(data);setData(data)
-        },
+        setData,
         startTime,
-        setStartTime
+        setStartTime,
+        highlight,
+        setHighlight
     };
 
     // Wraps the given child components in a Provider for the above context.
@@ -28,11 +31,32 @@ function AppContextProvider({ children }) {
     );
 }
 
+const Appointment = (prop) => {
+    const {data, setData, highlight, setHighlight} = useContext(AppContext);
+    const isHighlighted = highlight === prop.data.id;
+
+    return (
+        <Appointments.Appointment
+            {...prop}
+            className={`${prop.className} ${styles.customAppointment} ${styles.appointment} ${isHighlighted && styles.highlight}` }
+            onClick={() => setHighlight(prop.data.id)}
+        >
+            {isHighlighted && (<>
+                <div className={styles.resizeButtonsContainer}>
+                    <div className={`${styles.resizeButton} ${styles.resizeButtonTop}`}/>
+                    <div className={`${styles.resizeButton} ${styles.resizeButtonBottom}`}/>
+                </div>
+                <div onClick={() => {setData(data.filter(appointment => appointment.id !== prop.data.id))}} className={styles.deleteButton}>
+                    <DeleteIcon fontSize={"small"}/>
+                </div>
+            </>)}
+        </Appointments.Appointment>
+    );
+};
+
 const TimeTableCellComponent = (prop) => {
-    const {data,
-        setData,
-        startTime,
-        setStartTime} = useContext(AppContext)
+    const {data, setData, startTime, setStartTime, setHighlight} = useContext(AppContext);
+
     return (
         <WeekView.TimeTableCell
             {...prop}
@@ -44,7 +68,9 @@ const TimeTableCellComponent = (prop) => {
                     }
 
                     let newAppointment = {startDate: startTime, endDate: prop.endDate};
-                    setData(mergeTimetable(data, newAppointment));
+                    let {newTimetable, modifiedNewAppointment} = mergeTimetable(data, newAppointment);
+                    setHighlight(modifiedNewAppointment.id);
+                    setData(newTimetable);
                 } finally {
                     setStartTime(null);
                 }
@@ -54,24 +80,26 @@ const TimeTableCellComponent = (prop) => {
 };
 
 const Timetable = () => {
-    const {data, setData} = useContext(AppContext)
+    const {data, setData, setHighlight} = useContext(AppContext)
 
     return (
         <Paper>
             <Scheduler data={data}>
                 <ViewState />
                 <WeekView timeTableCellComponent={TimeTableCellComponent} />
-                <Appointments />
+                <Appointments appointmentComponent={Appointment} />
                 <EditingState
                     onCommitChanges={({ added, changed, deleted }) => {
                         setData((data) => {
                             if (added) {
-                                throw new Error("Shouldn't get in here");
+                                throw new Error('Shouldn\'t get in here');
                             }
                             if (changed) {
                                 for (let changedAppointmentID in changed) {
-                                    let dataWithoutChanged = data.filter(a => a.id !== changedAppointmentID);
-                                    data = mergeTimetable(dataWithoutChanged, changed[changedAppointmentID])
+                                    let dataWithoutChanged = data.filter(a => a.id !== Number(changedAppointmentID));
+                                    let {newTimetable, modifiedNewAppointment} = mergeTimetable(dataWithoutChanged, changed[changedAppointmentID]);
+                                    data = newTimetable;
+                                    setHighlight(modifiedNewAppointment.id);
                                 }
                             }
                             if (deleted !== undefined) {
@@ -118,7 +146,7 @@ function mergeTimetable(oldAppointments, newAppointment) {
 
     newAppointments.push(updatedNewAppointment);
 
-    return newAppointments;
+    return {newTimetable: newAppointments, modifiedNewAppointment: updatedNewAppointment};
 }
 
 function generateID() {
