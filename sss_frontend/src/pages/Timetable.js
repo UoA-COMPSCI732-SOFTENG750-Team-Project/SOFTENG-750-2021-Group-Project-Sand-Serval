@@ -70,7 +70,7 @@ const Timetable = () => {
                             }
                             if (changed) {
                                 for (let changedAppointmentID in changed) {
-                                    let dataWithoutChanged = data.filter(a => a.id !== changedAppointmentID);
+                                    let dataWithoutChanged = data.filter(a => a.id !== Number(changedAppointmentID));
                                     data = mergeTimetable(dataWithoutChanged, changed[changedAppointmentID])
                                 }
                             }
