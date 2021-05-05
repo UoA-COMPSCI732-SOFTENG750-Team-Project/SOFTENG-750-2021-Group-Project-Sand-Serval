@@ -2,6 +2,7 @@ import { Typography, Button, TextField, Container } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import CalendarPicker from '../components/calendar'
 import styles from './Home.module.css';
+import Wrapper from './Timetable.js';
 
 export default function Home() {
     return (
@@ -13,7 +14,7 @@ export default function Home() {
             <Typography>
                 Choose Date
             </Typography>
-            
+            <Wrapper/>
             <CalendarPicker />
 
             <Link to={"/sign-in"}>
