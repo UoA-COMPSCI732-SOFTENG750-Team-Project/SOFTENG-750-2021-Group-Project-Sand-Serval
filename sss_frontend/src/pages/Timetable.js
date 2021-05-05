@@ -1,5 +1,6 @@
 import React, {useContext, useState} from 'react';
 import Paper from '@material-ui/core/Paper';
+import DeleteIcon from '@material-ui/icons/Delete';
 import {EditingState, IntegratedEditing, ViewState} from '@devexpress/dx-react-scheduler';
 import {Appointments, DragDropProvider, Scheduler, WeekView} from '@devexpress/dx-react-scheduler-material-ui';
 import styles from './Timetable.module.css';
@@ -31,7 +32,7 @@ function AppContextProvider({ children }) {
 }
 
 const Appointment = (prop) => {
-    const {highlight, setHighlight} = useContext(AppContext);
+    const {data, setData, highlight, setHighlight} = useContext(AppContext);
     const isHighlighted = highlight === prop.data.id;
 
     return (
@@ -40,12 +41,15 @@ const Appointment = (prop) => {
             className={`${prop.className} ${styles.customAppointment} ${styles.appointment} ${isHighlighted && styles.highlight}` }
             onClick={() => setHighlight(prop.data.id)}
         >
-            {isHighlighted && (
+            {isHighlighted && (<>
                 <div className={styles.resizeButtonsContainer}>
                     <div className={`${styles.resizeButton} ${styles.resizeButtonTop}`}/>
                     <div className={`${styles.resizeButton} ${styles.resizeButtonBottom}`}/>
                 </div>
-            )}
+                <div onClick={() => {setData(data.filter(appointment => appointment.id !== prop.data.id))}} className={styles.deleteButton}>
+                    <DeleteIcon fontSize={"small"}/>
+                </div>
+            </>)}
         </Appointments.Appointment>
     );
 };
