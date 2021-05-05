@@ -7,6 +7,7 @@ const AppContext = React.createContext({
 
 function AppContextProvider({ children }) {
     // TODO: change event to null
+    // eslint-disable-next-line
     const [event, setEvent] = useState({_id: '608ba57e2b763e2b407e6dbf'});
     const [user, setUser] = useState(null);
 
