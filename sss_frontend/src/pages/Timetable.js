@@ -1,7 +1,7 @@
 import React, {useContext, useState} from 'react';
 import Paper from '@material-ui/core/Paper';
 import {EditingState, IntegratedEditing, ViewState} from '@devexpress/dx-react-scheduler';
-import {Appointments, AppointmentForm, DragDropProvider, Scheduler, WeekView} from '@devexpress/dx-react-scheduler-material-ui';
+import {Appointments, DragDropProvider, Scheduler, WeekView} from '@devexpress/dx-react-scheduler-material-ui';
 
 const AppContext = React.createContext({
     data: [],
@@ -44,51 +44,7 @@ const TimeTableCellComponent = (prop) => {
                     }
 
                     let newAppointment = {startDate: startTime, endDate: prop.endDate};
-                    let newData = [];
-                    data.forEach(a => {
-                        if (a.startDate.getTime() < newAppointment.startDate.getTime()) {
-                            if (a.endDate.getTime() < newAppointment.startDate.getTime()) {
-                                newData.push(a);
-                                return;
-                            } else {
-                                newAppointment.startDate = a.startDate;
-                            }
-
-                            if (a.endDate.getTime() > newAppointment.endDate.getTime()) {
-                                newAppointment.endDate = a.endDate;
-                            }
-                        } else if (a.startDate.getTime() <= newAppointment.endDate.getTime()) {
-                            if (a.endDate.getTime() > newAppointment.endDate.getTime()) {
-                                newAppointment.endDate = a.endDate;
-                            }
-                        } else {
-                            newData.push(a);
-                        }
-
-                        // a.endDate.getTime() <= newAppointment.startDate.getTime()
-                    });
-
-                    newData.push(newAppointment);
-                    setData(newData);
-
-                    // if (startTime.getTime() === prop.endDate.getTime()) {
-                    //     let index = data.findIndex(
-                    //         (a) => a.startDate.getTime() === prop.startDate.getTime() && a.endDate.getTime() === prop.endDate.getTime()
-                    //     );
-                    //     console.log("index")
-                    //     console.log(index)
-                    //     if (index !== -1) {
-                    //         setData([...data.slice(0, index), ...data.slice(index + 1)]);
-                    //         return;
-                    //     }
-                    //     setData([
-                    //         ...data,
-                    //         {startDate: prop.startDate, endDate: prop.endDate}
-                    //     ]);
-                    //     return;
-                    // }
-                    //
-                    // setData([...data, {startDate: startTime, endDate: prop.endDate}]);
+                    setData(mergeTimetable(data, newAppointment));
                 } finally {
                     setStartTime(null);
                 }
@@ -98,13 +54,7 @@ const TimeTableCellComponent = (prop) => {
 };
 
 const Timetable = () => {
-    const {data,
-        setData,
-        startTime,
-        setStartTime} = useContext(AppContext)
-
-    console.log("timetable")
-    console.log(data)
+    const {data, setData} = useContext(AppContext)
 
     return (
         <Paper>
@@ -116,18 +66,13 @@ const Timetable = () => {
                     onCommitChanges={({ added, changed, deleted }) => {
                         setData((data) => {
                             if (added) {
-                                throw new Error("Shouldn't get in here")
-                                const startingAddedId =
-                                    data.length > 0 ? data[data.length - 1].id + 1 : 0;
-                                // for ()
-                                data = [...data, { id: startingAddedId, ...added }];
+                                throw new Error("Shouldn't get in here");
                             }
                             if (changed) {
-                                data = data.map((appointment) =>
-                                    changed[appointment.id]
-                                        ? { ...appointment, ...changed[appointment.id] }
-                                        : appointment
-                                );
+                                for (let changedAppointmentID in changed) {
+                                    let dataWithoutChanged = data.filter(a => a.id !== changedAppointmentID);
+                                    data = mergeTimetable(dataWithoutChanged, changed[changedAppointmentID])
+                                }
                             }
                             if (deleted !== undefined) {
                                 data = data.filter((appointment) => appointment.id !== deleted);
@@ -137,8 +82,7 @@ const Timetable = () => {
                     }}
                 />
                 <IntegratedEditing />
-                {/*<AppointmentForm/>*/}
-                <DragDropProvider />
+                <DragDropProvider allowDrag={() => false} />
             </Scheduler>
         </Paper>
     );
@@ -146,6 +90,39 @@ const Timetable = () => {
 
 const Wrapper = () => {
     return (<AppContextProvider><Timetable/></AppContextProvider>)
+}
+
+function mergeTimetable(oldAppointments, newAppointment) {
+    let updatedNewAppointment = {id: generateID(), startDate: newAppointment.startDate, endDate: newAppointment.endDate};
+    let newAppointments = [];
+    oldAppointments.forEach(a => {
+        if (a.startDate.getTime() < updatedNewAppointment.startDate.getTime()) {
+            if (a.endDate.getTime() < updatedNewAppointment.startDate.getTime()) {
+                newAppointments.push(a);
+                return;
+            } else {
+                updatedNewAppointment.startDate = a.startDate;
+            }
+
+            if (a.endDate.getTime() > updatedNewAppointment.endDate.getTime()) {
+                updatedNewAppointment.endDate = a.endDate;
+            }
+        } else if (a.startDate.getTime() <= updatedNewAppointment.endDate.getTime()) {
+            if (a.endDate.getTime() > updatedNewAppointment.endDate.getTime()) {
+                updatedNewAppointment.endDate = a.endDate;
+            }
+        } else {
+            newAppointments.push(a);
+        }
+    });
+
+    newAppointments.push(updatedNewAppointment);
+
+    return newAppointments;
+}
+
+function generateID() {
+    return Math.round(Math.random() * Math.pow(10, 10));
 }
 
 export default Wrapper;
