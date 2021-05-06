@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import path from 'path';
 import connectToDatabase from './db/db-connect';
 
+
 // Setup Express
 const app = express();
 const port = process.env.PORT || 3001;
@@ -15,7 +16,12 @@ app.use(function (req, res, next) {
 })
 
 // Setup session middleware
-app.use(session({ secret: crypto.randomBytes(48).toString('hex') }));
+var Server = require("http").Server;
+var server = Server(app);
+var sio = require("socket.io")(server);
+var sessionMiddleware = session({ secret: crypto.randomBytes(48).toString('hex') })
+sio.use(function(socket, next) {sessionMiddleware(socket.request, {}, next);});
+app.use(sessionMiddleware);
 
 // Setup our routes.
 import routes from './routes';
@@ -37,6 +43,10 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
+sio.sockets.on("connection", function(socket) {
+    console.log(socket.request.session) // Now it's available from Socket.IO sockets too! Win!
+  });
+  
 // Start the DB running. Then, once it's connected, start the server.
 connectToDatabase()
     .then(() => app.listen(port, () => console.log(`App server listening on port ${port}!`)));
