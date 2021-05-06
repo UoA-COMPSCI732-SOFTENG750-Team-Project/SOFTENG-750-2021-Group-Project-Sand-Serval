@@ -7,6 +7,7 @@ import Home from './pages/Home'
 // import dayjs from 'dayjs';
 import './App.css';
 import { Container } from '@material-ui/core';
+import SignIn from './pages/SignIn';
 
 function App() {
 
@@ -28,6 +29,9 @@ function App() {
       <Container maxWidth="lg" id="main">
         <BrowserRouter>
           <Switch>
+            <Route path="/sign-in">
+              <SignIn />
+            </Route>
             <Route path="/">
               <Home />
             </Route>
