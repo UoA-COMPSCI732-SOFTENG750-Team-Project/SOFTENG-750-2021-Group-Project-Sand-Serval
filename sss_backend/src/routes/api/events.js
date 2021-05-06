@@ -62,6 +62,10 @@ router.post('/:id/sign-in', async (req, res) => {
     }
 
     const event = await eventsDao.retrieveEvent(id);
+    if (!event){
+        res.sendStatus(HTTP_NOT_FOUND);
+        return;
+    }
     const dbUser = event.users.find(user => user.name === name);
     if (!dbUser) {
         event.users.push({
