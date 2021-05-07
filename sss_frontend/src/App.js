@@ -31,12 +31,14 @@ function App() {
                         <Route path="/sign-in">
                             <SignIn />
                         </Route>
+                        <Route path="/timetable">
+                            <Timetable />
+                        </Route>
                         <Route path="/">
                             <Home />
                         </Route>
                     </Switch>
                 </BrowserRouter>
-                <Timetable />
             </Container>
 
         </div>
