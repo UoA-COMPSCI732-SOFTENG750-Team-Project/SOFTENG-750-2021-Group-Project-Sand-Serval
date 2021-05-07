@@ -16,11 +16,11 @@ app.use(function (req, res, next) {
 })
 
 // Setup session middleware
-var Server = require("http").Server;
-var server = Server(app);
-var sio = require("socket.io")(server);
+const httpServer = require("http").createServer(app);
+const options = { /* ... */ };
+const io = require("socket.io")(httpServer, options);
 var sessionMiddleware = session({ secret: crypto.randomBytes(48).toString('hex') })
-sio.use(function(socket, next) {sessionMiddleware(socket.request, {}, next);});
+io.use(function(socket, next) {sessionMiddleware(socket.request, {}, next);});
 app.use(sessionMiddleware);
 
 // Setup our routes.
@@ -43,10 +43,29 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-sio.sockets.on("connection", function(socket) {
-    console.log(socket.request.session) // Now it's available from Socket.IO sockets too! Win!
+let interval;
+
+io.on("connection", (socket) => {
+  console.log("New client connected");
+  if (interval) {
+    clearInterval(interval);
+  }
+  interval = setInterval(() => getApiAndEmit(socket), 1000);
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+    clearInterval(interval);
   });
-  
+});
+
+const getApiAndEmit = socket => {
+    const response = new Date();
+    // Emitting a new message. Will be consumed by the client
+    socket.emit("FromAPI", response);
+  };
+// sio.sockets.on("connection", function(socket) {
+//     console.log(socket.request.session) // Now it's available from Socket.IO sockets too! Win!
+//   });
+
 // Start the DB running. Then, once it's connected, start the server.
 connectToDatabase()
-    .then(() => app.listen(port, () => console.log(`App server listening on port ${port}!`)));
+    .then(() => httpServer.listen(port, () => console.log(`App server listening on port ${port}!`)));

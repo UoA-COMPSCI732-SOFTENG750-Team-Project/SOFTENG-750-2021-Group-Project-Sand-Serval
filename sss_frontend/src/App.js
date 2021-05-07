@@ -8,9 +8,11 @@ import Home from './pages/Home'
 import './App.css';
 import { Container } from '@material-ui/core';
 import SignIn from './pages/SignIn';
+import ClientComponent from "./components/testSocket";
+import React, { useState } from "react";
 
 function App() {
-
+  const [loadClient, setLoadClient] = useState(true);
   
   return (
     <div className="Root">
@@ -39,7 +41,16 @@ function App() {
         </BrowserRouter>
       </Container>
       
+      <>
+      {/* LOAD OR UNLOAD THE CLIENT */}
+      <button onClick={() => setLoadClient(prevState => !prevState)}>
+        STOP CLIENT
+      </button>
+      {/* SOCKET IO CLIENT*/}
+      {loadClient ? <ClientComponent /> : null}
+    </>
     </div>
+    
   );
 }
 
