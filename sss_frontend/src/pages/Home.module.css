@@ -11,7 +11,31 @@
 }
 
 .midSection > div {
+    display: flex !important;
+    flex-direction: column !important;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
+}
+
+.pickTime {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+@media only screen and (max-width: 815px) {
+    body, html { overflow-x:hidden; }
+
+    .midSection {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+
+    }
+    .midSection > div {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
 }

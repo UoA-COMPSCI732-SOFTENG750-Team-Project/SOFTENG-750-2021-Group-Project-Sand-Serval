@@ -4,7 +4,9 @@ import CalendarPicker from '../components/calendar'
 import styles from './Home.module.css';
 // eslint-disable-next-line
 import Wrapper from './Timetable.js';
-import SelectTime from '../components/selectTime'
+import SelectStartTime from '../components/selectStartTime'
+import SelectEndTime from '../components/selectEndTime'
+
 export default function Home() {
     return (
         <Container className={styles.Container}>
@@ -21,17 +23,20 @@ export default function Home() {
                     </Typography>
                     <CalendarPicker />
                 </div>
-                <div>
+                <div >
                     <Typography variant="h5" color='inherit'> 
                         Choose Time
                     </Typography>
-                    
-                    <SelectTime />
+                    <div className="pickTime">
+                        <SelectStartTime />
+
+                        <SelectEndTime />
+                    </div>
                 </div>
             </div>
 
             <Link to={"/sign-in"}>
-                <Button variant="contained" color="primary">
+                <Button variant="contained" style={{backgroundColor: '#4E9BFF', color: '#FFFFFF'}}>
                     Create Event!
                 </Button>
             </Link>

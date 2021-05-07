@@ -1,29 +1,28 @@
-import React, { useState } from "react";
-import DataPicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import {useState} from 'react'
+import 'react-date-range/dist/styles.css'; 
+import 'react-date-range/dist/theme/default.css'; 
+import { DateRange } from 'react-date-range';
+import './calendar.css'
 
-const CalendarPicker = () => {
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(null);
-    const onChange = dates => {
-        const [start, end] = dates;
-        setStartDate(start);
-        setEndDate(end);
-    };
-    console.log(startDate);
 
-    console.log(endDate);
 
-    return (
-        <DataPicker
-        selected={startDate}
-        onChange={onChange}
-        startDate={startDate}
-        endDate={endDate}
-        selectsRange
-        inline
+export default function CalendarPicker() {
+
+    const [state, setState] = useState([
+        {
+          startDate: new Date(),
+          endDate: null,
+          key: 'selection'
+        }
+      ]);
+
+      return (
+        <DateRange
+        editableDateInputs={true}
+        onChange={item => setState([item.selection])}
+        moveRangeOnFirstSelection={false}
+        ranges={state}
         />
     );
-};
 
-export default CalendarPicker;
+}

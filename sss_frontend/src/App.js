@@ -8,6 +8,7 @@ import Home from './pages/Home'
 import './App.css';
 import { Container } from '@material-ui/core';
 import SignIn from './pages/SignIn';
+import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -30,7 +31,7 @@ function App() {
           <Typography variant="h6" id="title">
             SSScheduler
           </Typography>
-          <Button variant="contained" color="primary">
+          <Button variant="contained" style={{backgroundColor: '#4E9BFF', color: '#FFFFFF'}}>
             Plan an Event
           </Button>
         </Toolbar>
@@ -48,7 +49,9 @@ function App() {
           </Switch>
         </BrowserRouter>
       </Container>
-      
+      <footer>
+          <p>&copy; SE750 / CS732, Group 30 - Sand Serval, {moment().format("MMMM Do, YYYY")}</p>
+        </footer>
     </div>
   );
 }
