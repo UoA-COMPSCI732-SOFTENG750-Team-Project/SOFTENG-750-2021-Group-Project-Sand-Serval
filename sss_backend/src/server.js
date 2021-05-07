@@ -43,6 +43,7 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
+//This is a test for socket connection
 let interval;
 
 io.on("connection", (socket) => {
