@@ -26,7 +26,11 @@ function AppContextProvider({ children }) {
             throw new Error('Name and password don\'t matches');
         }
 
-        setUser(name);
+        setUser({name});
+    }
+
+    function setTimetable(timetable) {
+        setUser({...user, timetable});
     }
 
     // The context value that will be supplied to any descendants of this component.
@@ -34,6 +38,8 @@ function AppContextProvider({ children }) {
         event,
         user,
         signIn,
+        timetable: user ? (user.timetable ? user.timetable : []) : [],
+        setTimetable,
     };
 
     // Wraps the given child components in a Provider for the above context.
