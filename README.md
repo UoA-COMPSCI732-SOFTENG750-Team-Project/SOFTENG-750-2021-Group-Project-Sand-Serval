@@ -23,18 +23,34 @@ This is an web app developed by [Wilson](https://github.com/WilsonBaker), [Tudor
 Check out our live demo [here](https://ssscheduler.netlify.app/)<br>
 
 
-# How to start frontend
+# How to start the frontend
 
-### Make sure npm, nodejs is installed
+### Make sure npm, nodejs are installed
 
 <br>
-Go to termial, cd to frontend folder. <br>
+Go to termial, make sure you are at root folder<br>
 Run follwing commands <br>
 
 ```
+cd sss_frontend
 npm install --force
+npm update --force
 npm run start
 ```
 
 Then there should be localhost coming up and test it out!
 
+# How to start the backend
+
+### Make sure npm, nodejs, and mongoDb are installed
+
+<br>
+Go to termial, make sure you are at root folder. <br>
+Run follwing commands <br>
+
+```
+cd sss_backend
+npm install --force
+npm run start
+```
+Then you will see the server is listening on port 3001！
