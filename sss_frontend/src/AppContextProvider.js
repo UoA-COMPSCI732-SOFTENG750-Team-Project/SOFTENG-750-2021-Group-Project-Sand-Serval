@@ -39,7 +39,9 @@ function AppContextProvider({ children }) {
             },
             body: JSON.stringify({name, dates, from, to})
         });
-
+        if (res.status === 201) {
+            console.log("created");
+        }
         if (res.status === 400) {
             throw new Error('Error when creating event');
         }

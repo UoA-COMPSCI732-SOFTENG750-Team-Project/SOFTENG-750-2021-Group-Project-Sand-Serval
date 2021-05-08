@@ -22,7 +22,13 @@
     display: flex !important;
     flex-direction: column !important;
 }
+.chooseDate {
+    margin-top: 10px !important;
+}
 
+.chooseTime {
+    margin-top: 10px !important;
+}
 @media only screen and (max-width: 815px) {
     body, html { overflow-x:hidden; }
 
@@ -36,6 +42,19 @@
         text-align: center;
         margin-left: auto;
         margin-right: auto;
+    }
+    .dateRange {
+        width:100%;
+    }
+    .chooseDate {
+        margin-top: 10px !important;
+    }
+    .dates {
+        border-bottom: 1px solid #2c2c2c;
+
+    }
+    .chooseTime {
+        margin-top: 10px !important;
     }
 
 }
