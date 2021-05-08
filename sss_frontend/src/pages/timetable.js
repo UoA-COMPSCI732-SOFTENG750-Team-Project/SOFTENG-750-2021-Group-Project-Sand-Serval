@@ -41,15 +41,22 @@ const Appointment = (prop) => {
             className={`${prop.className} ${styles.customAppointment} ${styles.appointment} ${isHighlighted && styles.highlight}` }
             onClick={() => setHighlight(prop.data.id)}
         >
-            {isHighlighted && (<>
-                <div className={styles.resizeButtonsContainer}>
+            <div className={styles.resizeButtonsContainer}>
+                {isHighlighted && (
                     <div className={`${styles.resizeButton} ${styles.resizeButtonTop}`}/>
-                    <div className={`${styles.resizeButton} ${styles.resizeButtonBottom}`}/>
+                )}
+                <div className={styles.appointmentDate}>
+                    {prop.children}
                 </div>
+                {isHighlighted && (
+                    <div className={`${styles.resizeButton} ${styles.resizeButtonBottom}`}/>
+                )}
+            </div>
+            {isHighlighted && (
                 <div onClick={() => {setData(data.filter(appointment => appointment.id !== prop.data.id))}} className={styles.deleteButton}>
                     <DeleteIcon fontSize={"small"}/>
                 </div>
-            </>)}
+            )}
         </Appointments.Appointment>
     );
 };

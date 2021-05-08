@@ -2,6 +2,7 @@
 import { AppBar, Typography, CssBaseline, Button, Toolbar, makeStyles } from '@material-ui/core';
 import { Switch, Route, BrowserRouter } from 'react-router-dom';
 import Home from './pages/Home'
+import Timetable from './pages/Timetable';
 // import { useContext } from 'react';
 // import Footer from './components/Footer';
 // import dayjs from 'dayjs';
@@ -48,6 +49,7 @@ function App() {
             </Route>
           </Switch>
         </BrowserRouter>
+        <Timetable />
       </Container>
       <footer>
           <p>&copy; SE750 / CS732, Group 30 - Sand Serval, {moment().format("MMMM Do, YYYY")}</p>
