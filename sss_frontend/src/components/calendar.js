@@ -6,7 +6,7 @@ import './calendar.css'
 
 
 
-export default function CalendarPicker() {
+export default function CalendarPicker(date, onChange) {
 
     const [state, setState] = useState([
         {

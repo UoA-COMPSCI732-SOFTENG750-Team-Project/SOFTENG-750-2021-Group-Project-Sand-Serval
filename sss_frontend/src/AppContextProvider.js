@@ -30,11 +30,29 @@ function AppContextProvider({ children }) {
         setUser(name);
     }
 
+    async function createEvent(name, dates, from, to) {
+        let res = await fetch(`/api/events/`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name, dates, from, to})
+        });
+
+        if (res.status === 400) {
+            throw new Error('Error when creating event');
+        }
+
+        setEvent(name);
+    }
+
     // The context value that will be supplied to any descendants of this component.
     const context = {
         event,
         user,
         signIn,
+        createEvent,
     };
 
     // Wraps the given child components in a Provider for the above context.
