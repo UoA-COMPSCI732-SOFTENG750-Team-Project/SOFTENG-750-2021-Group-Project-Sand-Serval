@@ -7,7 +7,22 @@ const AppContext = React.createContext({
 
 function AppContextProvider({ children }) {
     // TODO: change event to null
-    const [event, setEvent] = useState({_id: '608ba57e2b763e2b407e6dbf'});
+    const [event, setEvent] = useState({
+        _id: '608ba57e2b763e2b407e6dbf',
+        userCount: 2,
+        timetable: [
+            {
+                users: ['James'],
+                startDate: new Date('Sun May 02 2021 00:30:00 GMT+1200 (New Zealand Standard Time)'),
+                endDate: new Date('Sun May 02 2021 01:00:00 GMT+1200 (New Zealand Standard Time)'),
+            },
+            {
+                users: ['James', 'Wilson'],
+                startDate: new Date('Sun May 02 2021 01:30:00 GMT+1200 (New Zealand Standard Time)'),
+                endDate: new Date('Sun May 02 2021 02:00:00 GMT+1200 (New Zealand Standard Time)'),
+            },
+        ],
+    });
     const [user, setUser] = useState(null);
 
     async function signIn(name, password) {
