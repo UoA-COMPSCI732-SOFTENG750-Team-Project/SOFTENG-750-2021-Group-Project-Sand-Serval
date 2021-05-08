@@ -1,5 +1,5 @@
-import { Typography, Button, TextField, Container, Link } from "@material-ui/core";
-import { useHistory, Redirect  } from "react-router-dom";
+import { Typography, Button, TextField, Container } from "@material-ui/core";
+import { useHistory  } from "react-router-dom";
 import styles from './Home.module.css';
 import React, { useContext, useState} from 'react';
 import MuiAlert from "@material-ui/lab/Alert";
