@@ -1,11 +1,13 @@
 import { Button, Divider, InputLabel, TextField, Typography } from "@material-ui/core";
 import { useContext, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import styles from './SignIn.module.css';
 import { AppContext } from '../AppContextProvider';
 
 export default function SignIn() {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
+    const history = useHistory();
     const { signIn } = useContext(AppContext);
 
     const extendedSignIn = () => {
@@ -14,7 +16,9 @@ export default function SignIn() {
             return;
         }
 
-        signIn(name, password).catch(e => window.alert(e.message))
+        signIn(name, password)
+            .then(() => history.push('/timetable'))
+            .catch(e => window.alert(e.message));
     };
 
     return (

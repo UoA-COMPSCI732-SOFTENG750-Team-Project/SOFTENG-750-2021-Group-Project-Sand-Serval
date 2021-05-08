@@ -3,20 +3,21 @@ import Paper from '@material-ui/core/Paper';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {EditingState, IntegratedEditing, ViewState} from '@devexpress/dx-react-scheduler';
 import {Appointments, DragDropProvider, Scheduler, WeekView} from '@devexpress/dx-react-scheduler-material-ui';
-import styles from './Timetable.module.css';
+import styles from './UserTimetable.module.css';
+import {AppContext} from '../AppContextProvider';
 
-const AppContext = React.createContext({
+const UserTimetableContext = React.createContext({
     data: [],
     startTime: null
 });
 
-function AppContextProvider({ children }) {
-    const [data, setData] = useState([]);
+function UserTimetableContextProvider({ children }) {
+    const {timetable, setTimetable} = useContext(AppContext);
     const [startTime, setStartTime] = useState(null);
     const [highlight, setHighlight] = useState(null);
     const context = {
-        data,
-        setData,
+        data: timetable,
+        setData: setTimetable,
         startTime,
         setStartTime,
         highlight,
@@ -25,14 +26,14 @@ function AppContextProvider({ children }) {
 
     // Wraps the given child components in a Provider for the above context.
     return (
-        <AppContext.Provider value={context}>
+        <UserTimetableContext.Provider value={context}>
             {children}
-        </AppContext.Provider>
+        </UserTimetableContext.Provider>
     );
 }
 
 const Appointment = (prop) => {
-    const {data, setData, highlight, setHighlight} = useContext(AppContext);
+    const {data, setData, highlight, setHighlight} = useContext(UserTimetableContext);
     const isHighlighted = highlight === prop.data.id;
 
     return (
@@ -62,7 +63,7 @@ const Appointment = (prop) => {
 };
 
 const TimeTableCellComponent = (prop) => {
-    const {data, setData, startTime, setStartTime, setHighlight} = useContext(AppContext);
+    const {data, setData, startTime, setStartTime, setHighlight} = useContext(UserTimetableContext);
 
     return (
         <WeekView.TimeTableCell
@@ -86,8 +87,8 @@ const TimeTableCellComponent = (prop) => {
     );
 };
 
-const Timetable = () => {
-    const {data, setData, setHighlight} = useContext(AppContext)
+const UserTimetableLayout = () => {
+    const {data, setData, setHighlight} = useContext(UserTimetableContext);
 
     return (
         <Paper>
@@ -97,23 +98,24 @@ const Timetable = () => {
                 <Appointments appointmentComponent={Appointment} />
                 <EditingState
                     onCommitChanges={({ added, changed, deleted }) => {
-                        setData((data) => {
-                            if (added) {
-                                throw new Error('Shouldn\'t get in here');
+                        let newData = [...data];
+                        if (added) {
+                            throw new Error('Shouldn\'t get in here');
+                        }
+
+                        if (changed) {
+                            for (let changedAppointmentID in changed) {
+                                let dataWithoutChanged = newData.filter(a => a.id !== Number(changedAppointmentID));
+                                let {newTimetable, modifiedNewAppointment} = mergeTimetable(dataWithoutChanged, changed[changedAppointmentID]);
+                                newData = newTimetable;
+                                setHighlight(modifiedNewAppointment.id);
                             }
-                            if (changed) {
-                                for (let changedAppointmentID in changed) {
-                                    let dataWithoutChanged = data.filter(a => a.id !== Number(changedAppointmentID));
-                                    let {newTimetable, modifiedNewAppointment} = mergeTimetable(dataWithoutChanged, changed[changedAppointmentID]);
-                                    data = newTimetable;
-                                    setHighlight(modifiedNewAppointment.id);
-                                }
-                            }
-                            if (deleted !== undefined) {
-                                data = data.filter((appointment) => appointment.id !== deleted);
-                            }
-                            return data;
-                        });
+                        }
+
+                        if (deleted !== undefined) {
+                            newData = newData.filter((appointment) => appointment.id !== deleted);
+                        }
+                        setData(newData);
                     }}
                 />
                 <IntegratedEditing />
@@ -123,8 +125,8 @@ const Timetable = () => {
     );
 };
 
-const Wrapper = () => {
-    return (<AppContextProvider><Timetable/></AppContextProvider>)
+const UserTimetable = () => {
+    return (<UserTimetableContextProvider><UserTimetableLayout/></UserTimetableContextProvider>)
 }
 
 function mergeTimetable(oldAppointments, newAppointment) {
@@ -160,4 +162,4 @@ function generateID() {
     return Math.round(Math.random() * Math.pow(10, 10));
 }
 
-export default Wrapper;
+export default UserTimetable;
