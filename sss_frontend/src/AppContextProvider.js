@@ -65,7 +65,16 @@ function AppContextProvider({ children }) {
             throw new Error('Error when creating event');
         }
 
-        // setEvent();
+        let body = await res.json();
+
+        setEvent({
+            ...event,
+            _id: body._id,
+            name,
+            dates,
+            from,
+            to
+        });
     }
 
     // The context value that will be supplied to any descendants of this component.
