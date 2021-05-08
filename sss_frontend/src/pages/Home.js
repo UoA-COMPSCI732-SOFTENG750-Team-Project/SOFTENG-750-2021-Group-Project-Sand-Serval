@@ -38,8 +38,11 @@ export default function Home(props) {
             setError("Please Enter Event Name");
             return;
         }
-        history.push("/sign-in");
-        createEvent(name, [dates[0].startDate, dates[0].endDate], from, to).catch(e => window.alert(e))
+        createEvent(name, [dates[0].startDate, dates[0].endDate], from, to)
+            .then(() => {
+                history.push("/sign-in");
+            })
+            .catch(e => window.alert(e))
     }
     console.log(typeof(from));
 

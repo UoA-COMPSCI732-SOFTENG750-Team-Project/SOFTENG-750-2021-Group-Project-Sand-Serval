@@ -2,9 +2,10 @@ import React, {useContext, useState} from 'react';
 import Paper from '@material-ui/core/Paper';
 import DeleteIcon from '@material-ui/icons/Delete';
 import {EditingState, IntegratedEditing, ViewState} from '@devexpress/dx-react-scheduler';
-import {Appointments, DragDropProvider, Scheduler, WeekView} from '@devexpress/dx-react-scheduler-material-ui';
+import {Appointments, DateNavigator, DragDropProvider, Scheduler, Toolbar, WeekView} from '@devexpress/dx-react-scheduler-material-ui';
 import styles from './UserTimetable.module.css';
 import {AppContext} from '../AppContextProvider';
+import {isTimeTableCellDisabled, useNavigator} from './timetableHelpers';
 
 const UserTimetableContext = React.createContext({
     data: [],
@@ -12,10 +13,11 @@ const UserTimetableContext = React.createContext({
 });
 
 function UserTimetableContextProvider({ children }) {
-    const {timetable, setTimetable} = useContext(AppContext);
+    const {event, timetable, setTimetable} = useContext(AppContext);
     const [startTime, setStartTime] = useState(null);
     const [highlight, setHighlight] = useState(null);
     const context = {
+        event,
         data: timetable,
         setData: setTimetable,
         startTime,
@@ -63,9 +65,13 @@ const Appointment = (prop) => {
 };
 
 const TimeTableCellComponent = (prop) => {
-    const {data, setData, startTime, setStartTime, setHighlight} = useContext(UserTimetableContext);
+    const {event, data, setData, startTime, setStartTime, setHighlight} = useContext(UserTimetableContext);
 
-    return (
+    const isDisabled = isTimeTableCellDisabled(event, prop);
+
+    return isDisabled ? (
+        <WeekView.TimeTableCell isShaded={true}/>
+    ) : (
         <WeekView.TimeTableCell
             {...prop}
             onMouseDown={() => setStartTime(prop.startDate)}
@@ -88,13 +94,22 @@ const TimeTableCellComponent = (prop) => {
 };
 
 const UserTimetableLayout = () => {
-    const {data, setData, setHighlight} = useContext(UserTimetableContext);
+    const {event, data, setData, setHighlight} = useContext(UserTimetableContext);
+    const [currentDate, setCurrentDate] = useNavigator(event.dates[0], event.dates[1]);
 
     return (
         <Paper>
             <Scheduler data={data}>
-                <ViewState />
-                <WeekView timeTableCellComponent={TimeTableCellComponent} />
+                <ViewState
+                    currentDate={currentDate}
+                    onCurrentDateChange={setCurrentDate}
+                />
+                <WeekView
+                    timeTableCellComponent={TimeTableCellComponent}
+                    // Show at least from 8 AM to 6PM
+                    startDayHour={Math.min(event.from.getHours(), 8)}
+                    endDayHour={Math.max(event.to.getHours(), 18)}
+                />
                 <Appointments appointmentComponent={Appointment} />
                 <EditingState
                     onCommitChanges={({ added, changed, deleted }) => {
@@ -120,6 +135,8 @@ const UserTimetableLayout = () => {
                 />
                 <IntegratedEditing />
                 <DragDropProvider allowDrag={() => false} />
+                <Toolbar />
+                <DateNavigator />
             </Scheduler>
         </Paper>
     );
