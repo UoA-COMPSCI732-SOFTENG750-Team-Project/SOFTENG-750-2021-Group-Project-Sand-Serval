@@ -65,7 +65,13 @@ function AppContextProvider({ children }) {
             throw new Error('Error when creating event');
         }
 
-        // setEvent();
+        setEvent({
+            ...event,
+            name,
+            dates,
+            from,
+            to
+        });
     }
 
     // The context value that will be supplied to any descendants of this component.
