@@ -8,7 +8,7 @@ export default function SignIn() {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const history = useHistory();
-    const { signIn } = useContext(AppContext);
+    const { event, signIn } = useContext(AppContext);
 
     const extendedSignIn = () => {
         if (!name) {
@@ -17,13 +17,13 @@ export default function SignIn() {
         }
 
         signIn(name, password)
-            .then(() => history.push('/timetable'))
+            .then(() => history.push(`/${event._id}/timetable`))
             .catch(e => window.alert(e.message));
     };
 
     return (
         <section className={styles.signInContainer}>
-            <Typography variant="h5">Enter your name to see "Event"</Typography>
+            <Typography variant="h5">Enter your name to see "{event.name}"</Typography>
             <Divider />
 
             <section className={styles.signInSection}>
