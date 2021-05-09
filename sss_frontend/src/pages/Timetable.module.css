@@ -16,6 +16,9 @@
     margin-bottom: 1rem;
     text-align: center;
 }
+.bestTime {
+    color: "secondary"!important;
+}
 @media only screen and (max-width: 815px) {
     .greeting {
         font-size: 200%!important;
