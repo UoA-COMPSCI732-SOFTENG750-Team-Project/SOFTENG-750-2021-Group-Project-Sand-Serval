@@ -69,7 +69,7 @@ function AppContextProvider({ children }) {
     function setUpSocket() {
         const socket = socketIOClient();
         socket.on("update", (userName, newTimetable) => {
-            updateTimetable(userName, newTimetable);
+            // updateTimetable(userName, newTimetable);
         });
         setSocket(socket);
         socket.emit("eventid", event._id);
@@ -159,9 +159,54 @@ function AppContextProvider({ children }) {
     }
 
     async function updateTimetable(userName, newTimetable) {
-        //setEvent({...event, timetable});
-        //console.log(event.timetable);
-        //console.log(timetable);
+        let newGroupTimetables = [];
+        for (var i = 0; i < event.timetable.length; i++){
+            let groupTimetable = {
+                users: event.timetable[i].users.filter(existingUserName => existingUserName !== userName),
+                startDate: event.timetable[i].startDate,
+                endDate: event.timetable[i].endDate,
+            }
+            if (groupTimetable.users.length !== 0) {
+                newGroupTimetables.push(groupTimetable);
+            }
+        }
+
+        // while (newTimetables.length !== 0) {
+        //     let newTimetable = newTimetables.pop();
+        //
+        //     newGroupTimetables.forEach(groupTimetable => {
+        //         if (newTimetable.endDate.getTime() < groupTimetable.startDate.getTime()) {
+        //             // skip
+        //         } else if (newTimetable.startDate.getTime() < groupTimetable.startDate.getTime() &&
+        //             newTimetable.endDate.getTime() < groupTimetable.endDate.getTime()) {
+        //             //Split at group startDate
+        //             //Goes until newTimetable endDate
+        //         } else if (newTimetable.startDate.getTime() > groupTimetable.startDate.getTime() &&
+        //             newTimetable.endDate.getTime() < groupTimetable.endDate.getTime()) {
+        //
+        //         } else if (newTimetable.startDate.getTime() > groupTimetable.startDate.getTime() &&
+        //             newTimetable.endDate.getTime() > groupTimetable.endDate.getTime()) {
+        //
+        //         } else if (newTimetable.startDate.getTime() > groupTimetable.endDate.getTime()) {
+        //             // skip
+        //         }
+        //     });
+        // }
+        // newTimetables.forEach(newTimetable => {
+        //     let newNewGroupTimetables = [];
+        //     //CheckEveryGroupForUniqueTimeSlot checks if current timeslot endDate before all group startDate
+        //
+        //     newGroupTimetables.forEach(groupTimetable => {
+        //         if (newTimetable.endDate.getTime() < groupTimetable.startDate.getTime()) {
+        //             newNewGroupTimetables.push({
+        //                 users: [userName],
+        //                 // startDate:
+        //             });
+        //         }
+        //     });
+        // });
+
+        // setEvent({...event, timetable: newTimetables})
     }
 
     // The context value that will be supplied to any descendants of this component.
