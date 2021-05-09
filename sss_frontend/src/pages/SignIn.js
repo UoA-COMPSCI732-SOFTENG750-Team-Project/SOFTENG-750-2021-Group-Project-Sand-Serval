@@ -8,7 +8,7 @@ export default function SignIn() {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const history = useHistory();
-    const { signIn } = useContext(AppContext);
+    const { event, signIn } = useContext(AppContext);
 
     const extendedSignIn = () => {
         if (!name) {
@@ -17,13 +17,13 @@ export default function SignIn() {
         }
 
         signIn(name, password)
-            .then(() => history.push('/timetable'))
+            .then(() => history.push(`/${event._id}/timetable`))
             .catch(e => window.alert(e.message));
     };
 
     return (
         <section className={styles.signInContainer}>
-            <Typography variant="h5">Enter your name to see "Event"</Typography>
+            <Typography variant="h5">Enter your name to see "{event.name}"</Typography>
             <Divider />
 
             <section className={styles.signInSection}>
@@ -32,7 +32,9 @@ export default function SignIn() {
                     value={name}
                     onChange={event => setName(event.target.value)}
                     id="name"
-                    variant="outlined"
+                    label="Enter Your Name:" 
+                    required 
+                    inputProps={{min: 0, style: { textAlign: 'center'}}} 
                 />
             </section>
 
@@ -42,12 +44,13 @@ export default function SignIn() {
                     value={password}
                     onChange={event => setPassword(event.target.value)}
                     id="password"
-                    placeholder="Optional"
-                    variant="outlined" />
+                    label="Optional" 
+                    inputProps={{min: 0, style: { textAlign: 'center'}}} 
+                     />
             </section>
 
             <section className={styles.signInSection}>
-                <Button variant="contained" color="primary" onClick={extendedSignIn}>
+                <Button variant="contained" color="primary" onClick={extendedSignIn} style={{backgroundColor: "#4E9BFF", color: '#FFFFFF', marginTop: '20px'}}>
                     Sign In
                 </Button>
             </section>

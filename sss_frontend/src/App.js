@@ -1,15 +1,11 @@
-// import { Switch, Route, Redirect, Link, useLocation } from 'react-router-dom';
-import { AppBar, Typography, CssBaseline, Button, Toolbar, makeStyles } from '@material-ui/core';
-import { Switch, Route, BrowserRouter } from 'react-router-dom';
-import Home from './pages/Home'
+import { AppBar, Typography, Container, CssBaseline, Button, Toolbar, makeStyles } from '@material-ui/core';
+import {Switch, Redirect, Route, BrowserRouter} from 'react-router-dom';
+import Home from './pages/Home';
 import Timetable from './pages/Timetable';
-// import { useContext } from 'react';
-// import Footer from './components/Footer';
-// import dayjs from 'dayjs';
 import './App.css';
-import { Container } from '@material-ui/core';
 import SignIn from './pages/SignIn';
 import moment from 'moment';
+import EventLoading from './pages/EventLoading';
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -22,16 +18,17 @@ const useStyles = makeStyles((theme) => ({
 
 function App() {
     const classes = useStyles();
+    const eventIdPath = "/:eventId([\\da-f]+)";
 
     return (
-        <div className="Root">
+        <div className={classes.Root}>
             <CssBaseline />
             <AppBar position="fixed" className={classes.appBar} id="NavBar">
                 <Toolbar>
                     <Typography variant="h6" id="title">
                         SSScheduler
                     </Typography>
-                    <Button variant="contained" style={{backgroundColor: '#4E9BFF', color: '#FFFFFF'}}>
+                    <Button variant="contained" href="/" style={{backgroundColor: '#4E9BFF', color: '#FFFFFF'}}>
                         Plan an Event
                     </Button>
                 </Toolbar>
@@ -40,12 +37,22 @@ function App() {
             <Container maxWidth="lg" className={classes.main}>
                 <BrowserRouter>
                     <Switch>
-                        <Route path="/sign-in">
-                            <SignIn />
+                        <Route path={eventIdPath + "/sign-in"}>
+                            <EventLoading>
+                                <SignIn />
+                            </EventLoading>
                         </Route>
-                        <Route path="/timetable">
-                            <Timetable />
+                        <Route path={eventIdPath + "/timetable"}>
+                            <EventLoading>
+                                <Timetable />
+                            </EventLoading>
                         </Route>
+                        <Route
+                            path={eventIdPath}
+                            render={props => {
+                                return <Redirect to={`/${props.match.params.eventId}/sign-in`} />
+                            }}
+                        />
                         <Route path="/">
                             <Home />
                         </Route>

@@ -1,7 +1,7 @@
 import { Typography, Button, TextField, Container } from "@material-ui/core";
 import { useHistory  } from "react-router-dom";
 import styles from './Home.module.css';
-import React, { useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import MuiAlert from "@material-ui/lab/Alert";
 // eslint-disable-next-line
 import SelectStartTime from '../components/selectStartTime'
@@ -14,6 +14,8 @@ import { DateRange } from 'react-date-range';
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
   }
+
+
 export default function Home(props) {
     const [name, setName] = useState('');
 
@@ -39,37 +41,41 @@ export default function Home(props) {
             return;
         }
         createEvent(name, [dates[0].startDate, dates[0].endDate], from, to)
-            .then(() => {
-                history.push("/sign-in");
+            .then(eventId => {
+                history.push(`/${eventId}/sign-in`);
             })
             .catch(e => window.alert(e))
     }
-    console.log(typeof(from));
-
+    // console.log(typeof(from));
+    const executeScroll = () => window.scrollTo(0, 0);
+    
     return (
-        <Container className={styles.Container}>
-            {error && (
-            <Alert severity="error" onClick={() => setError(null)}>
-              {props.error || error}
-            </Alert>
-          )}
-            <TextField defaultValue=""
+        <Container className={styles.Container} >
+            <div>
+                {error && (
+                    <Alert severity="error" onClick={() => setError(null)}>
+                    {props.error || error}
+                    </Alert>
+                )}
+            </div>
+            <TextField 
+                       defaultValue=""
                        required 
-                       label="Required" 
+                       label="Enter Event Name:" 
                        onChange={(event) => {
                            setName(event.target.value); 
                         //    console.log(event.target.value); 
                            setError(null)
                         }}
-                        inputProps={{min: 0, style: { textAlign: 'center' }}} >
-                
+                        inputProps={{min: 0, style: { textAlign: 'center'}}} 
+                        >
+                        
             </TextField>
             
             
             {/* <Wrapper/> */}
             <div className={styles.midSection}>
-                <div className={styles.dates}
->
+                <div className={styles.dates} >
                     <Typography 
                         variant="h5" 
                         color='inherit'
@@ -106,7 +112,7 @@ export default function Home(props) {
             <Button variant="contained" 
                     disabled={!!error}
                     style={{backgroundColor: !!error ? '#6c6c6c': "#4E9BFF", color: '#FFFFFF', marginTop: '20px'}}
-                    onClick={() => {extendCreateEvent()} }>
+                    onClick={() => {extendCreateEvent() ; executeScroll()} }>
                 Create Event!
             </Button> 
             

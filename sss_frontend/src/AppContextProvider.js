@@ -66,7 +66,29 @@ function AppContextProvider({ children }) {
     }
    
 
-    //Update timetable. Send through to backend by socket
+    async function goToEvent(eventId) {
+        let res = await fetch(`/api/events/${eventId}`);
+        if (res.status === 400 || res.status === 404) {
+            throw new Error('No event with that ID exists');
+        }
+        let body = await res.json();
+
+        setEvent({
+            // TODO: probably remove the next line when removing the hardcoded data at `const [event, setEvent]`
+            ...event,
+            _id: body._id,
+            name: body.name,
+            dates: body.dates.map(string => new Date(string)),
+            from: new Date(body.from),
+            to: new Date(body.to)
+        });
+    }
+
+    async function isAuthenticated() {
+        console.warn("TODO: isAuthenticated");
+        return true;
+    }
+
     function setTimetable(timetable) {
         socket.emit("tableUpdate", timetable);
         setUser({...user, timetable});
@@ -99,6 +121,8 @@ function AppContextProvider({ children }) {
             from,
             to
         });
+
+        return body._id;
     }
 
     async function updateTimetable(userName, newTimetable) {
@@ -112,6 +136,8 @@ function AppContextProvider({ children }) {
         event,
         user,
         signIn,
+        goToEvent,
+        isAuthenticated,
         timetable: user ? (user.timetable ? user.timetable : []) : [],
         setTimetable,
         createEvent,
