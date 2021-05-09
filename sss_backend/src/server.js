@@ -3,6 +3,8 @@ import session from 'express-session';
 import crypto from 'crypto';
 import path from 'path';
 import connectToDatabase from './db/db-connect';
+import mongoose from 'mongoose';
+import * as eventsDao from './db/events-dao';
 
 // Setup Express
 const app = express();
@@ -44,15 +46,20 @@ if (process.env.NODE_ENV === 'production') {
 
 //Realtime socket implementation
 io.on("connection", async (socket) => {
+    const session = socket.request.session;
     console.log("User connected");
     socket.on("eventid", (id) => {
-        console.log(id);
         socket.join(id);
     });
 
-    socket.on("message", (data) => {
-        console.log(data);
+    //Handle update of timetable
+    socket.on("tableUpdate", async newTimetable => {
+        const event = await eventsDao.retrieveEvent(session.event);
+        const dbUser = event.users.find(user => user.name === session.name);
+        dbUser.timetable = newTimetable;
+        await event.save();
 
+        io.to(session.event).emit("update", session.name, newTimetable);
       });
 
     socket.on("disconnect", () => {

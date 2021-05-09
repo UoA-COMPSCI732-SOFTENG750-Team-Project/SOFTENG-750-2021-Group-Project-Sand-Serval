@@ -58,15 +58,20 @@ function AppContextProvider({ children }) {
         setUser({name});
 
         const socket = socketIOClient();
+        socket.on("update", (userName, newTimetable) => {
+            console.log(userName);
+            console.log(newTimetable);
+        });
         setSocket(socket);
         socket.emit("eventid", event._id);
     }
 
     //Update timetable. Send through to backend by socket
     function setTimetable(timetable) {
-        socket.to(event._id).send(timetable);
+        socket.emit("tableUpdate", timetable);
         setUser({...user, timetable});
     }
+    
 
     async function createEvent(name, dates, from, to) {
         let res = await fetch(`/api/events/`, {
