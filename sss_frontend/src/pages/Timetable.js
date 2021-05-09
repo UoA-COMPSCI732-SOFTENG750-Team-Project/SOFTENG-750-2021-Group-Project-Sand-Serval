@@ -20,22 +20,26 @@ const appendLeadingZeroes = (n) =>{
 };
 
 const bestTime = (e) => {
-    let i;
-    let userNum = 0;
-    let userIndex = 0;
-    for (i=0; i<e.length; i++) {
-        if (e[i].users.length > userNum) {
-            userNum = e[i].users.length;
-            userIndex = i;
+    if (e.startDate == null) {
+        return "None"
+    } else {
+        let i;
+        let userNum = 0;
+        let userIndex = 0;
+        for (i=0; i<e.length; i++) {
+            if (e[i].users.length > userNum) {
+                userNum = e[i].users.length;
+                userIndex = i;
+            }
         }
+        const months = ["Jan", "Feb", "Mar","Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        let eventUser = e[userIndex].users.join(', ');
+        let start = e[userIndex].startDate;
+        let end = e[userIndex].endDate;
+        let starttime = appendLeadingZeroes(start.getDate()) + '-' + months[start.getMonth()] + " " + appendLeadingZeroes(start.getHours()) + ':' + appendLeadingZeroes(start.getMinutes());
+        let endtime = appendLeadingZeroes(end.getDate()) + '-' + months[end.getMonth()] + " " + appendLeadingZeroes(end.getHours()) + ':' + appendLeadingZeroes(end.getMinutes());
+        return starttime + " to " + endtime + " | " + eventUser + " is/are avaliable";
     }
-    const months = ["Jan", "Feb", "Mar","Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    let eventUser = e[userIndex].users.join(', ');
-    let start = e[userIndex].startDate;
-    let end = e[userIndex].endDate;
-    let starttime = appendLeadingZeroes(start.getDate()) + '-' + months[start.getMonth()] + " " + appendLeadingZeroes(start.getHours()) + ':' + appendLeadingZeroes(start.getMinutes());
-    let endtime = appendLeadingZeroes(end.getDate()) + '-' + months[end.getMonth()] + " " + appendLeadingZeroes(end.getHours()) + ':' + appendLeadingZeroes(end.getMinutes());
-    return starttime + " to " + endtime + " | " + eventUser + " is/are avaliable";
 }
 export default function Timetable() {
     const history = useHistory();
@@ -61,7 +65,7 @@ export default function Timetable() {
     let url = window.location.href;
     url = url.substring(0, url.length-9) + "sign-in";
     let besttime = bestTime(event.timetable).toString();
-    console.log(besttime);
+    // console.log(besttime);
 
     return (
         <>
