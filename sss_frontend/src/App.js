@@ -24,14 +24,14 @@ function App() {
     const classes = useStyles();
 
     return (
-        <div className="Root">
+        <div className={classes.Root}>
             <CssBaseline />
             <AppBar position="fixed" className={classes.appBar} id="NavBar">
                 <Toolbar>
                     <Typography variant="h6" id="title">
                         SSScheduler
                     </Typography>
-                    <Button variant="contained" style={{backgroundColor: '#4E9BFF', color: '#FFFFFF'}}>
+                    <Button variant="contained" href="/" style={{backgroundColor: '#4E9BFF', color: '#FFFFFF'}}>
                         Plan an Event
                     </Button>
                 </Toolbar>

@@ -32,7 +32,9 @@ export default function SignIn() {
                     value={name}
                     onChange={event => setName(event.target.value)}
                     id="name"
-                    variant="outlined"
+                    label="Enter Your Name:" 
+                    required 
+                    inputProps={{min: 0, style: { textAlign: 'center'}}} 
                 />
             </section>
 
@@ -42,12 +44,13 @@ export default function SignIn() {
                     value={password}
                     onChange={event => setPassword(event.target.value)}
                     id="password"
-                    placeholder="Optional"
-                    variant="outlined" />
+                    label="Optional" 
+                    inputProps={{min: 0, style: { textAlign: 'center'}}} 
+                     />
             </section>
 
             <section className={styles.signInSection}>
-                <Button variant="contained" color="primary" onClick={extendedSignIn}>
+                <Button variant="contained" color="primary" onClick={extendedSignIn} style={{backgroundColor: "#4E9BFF", color: '#FFFFFF', marginTop: '20px'}}>
                     Sign In
                 </Button>
             </section>
