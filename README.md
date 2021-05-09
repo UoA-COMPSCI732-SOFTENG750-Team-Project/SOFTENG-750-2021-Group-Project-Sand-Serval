@@ -32,11 +32,12 @@ It is working but only for the frontend, we haven't set up the backend to the se
 Go to termial, make sure you are at root folder<br>
 Run follwing commands <br>
 
+Note if your npm version is 7+ then run npm update, otherwise you could ignore that for the time sake<br>
 ```
 cd sss_frontend
-npm install --force
-npm update --force
-npm run start
+npm install 
+npm update
+npm start
 ```
 
 Then there should be localhost coming up and test it out!
