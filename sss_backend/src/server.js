@@ -15,7 +15,12 @@ app.use(function (req, res, next) {
 })
 
 // Setup session middleware
-app.use(session({ secret: crypto.randomBytes(48).toString('hex') }));
+const httpServer = require("http").createServer(app);
+const options = { /* ... */ };
+const io = require("socket.io")(httpServer, options);
+var sessionMiddleware = session({ secret: crypto.randomBytes(48).toString('hex') })
+io.use(function(socket, next) {sessionMiddleware(socket.request, {}, next);});
+app.use(sessionMiddleware);
 
 // Setup our routes.
 import routes from './routes';
@@ -37,6 +42,24 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
+//Realtime socket implementation
+io.on("connection", async (socket) => {
+    console.log("User connected");
+    socket.on("eventid", (id) => {
+        console.log(id);
+        socket.join(id);
+    });
+
+    socket.on("message", (data) => {
+        console.log(data);
+
+      });
+
+    socket.on("disconnect", () => {
+        console.log("Client disconnected");
+      });
+});
+
 // Start the DB running. Then, once it's connected, start the server.
 connectToDatabase()
-    .then(() => app.listen(port, () => console.log(`App server listening on port ${port}!`)));
+    .then(() => httpServer.listen(port, () => console.log(`App server listening on port ${port}!`)));

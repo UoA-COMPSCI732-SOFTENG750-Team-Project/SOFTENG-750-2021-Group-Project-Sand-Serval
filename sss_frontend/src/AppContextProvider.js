@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import socketIOClient from "socket.io-client";
 
 const AppContext = React.createContext({
     event: null,
@@ -6,6 +7,8 @@ const AppContext = React.createContext({
 });
 
 function AppContextProvider({ children }) {
+
+    
     // TODO: change event to null
     // eslint-disable-next-line
     const [event, setEvent] = useState({
@@ -26,6 +29,16 @@ function AppContextProvider({ children }) {
     });
     const [user, setUser] = useState(null);
 
+    
+    const [socket, setSocket] = useState(null);
+
+    useEffect(() => {
+        let currentSocket = socket;
+        if (currentSocket != null) {
+            return () => currentSocket.disconnect();
+        }
+    }, [socket]);
+
     async function signIn(name, password) {
         let res = await fetch(`/api/events/${event._id}/sign-in`, {
             method: 'POST',
@@ -43,9 +56,15 @@ function AppContextProvider({ children }) {
         }
 
         setUser({name});
+
+        const socket = socketIOClient();
+        setSocket(socket);
+        socket.emit("eventid", event._id);
     }
 
+    //Update timetable. Send through to backend by socket
     function setTimetable(timetable) {
+        socket.to(event._id).send(timetable);
         setUser({...user, timetable});
     }
 
