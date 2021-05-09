@@ -51,8 +51,22 @@ function AppContextProvider({ children }) {
             throw new Error('Name and password don\'t matches');
         }
 
-        setUser({name});
+        let body = await res.json()
+        setUser({
+            name,
+            timetable: body.timetable.map(raw => {
+                return {
+                    id: raw._id,
+                    startDate: new Date(raw.startDate),
+                    endDate: new Date(raw.endDate)
+                };
+            })
+        });
 
+        setUpSocket();
+    }
+
+    function setUpSocket() {
         const socket = socketIOClient();
         socket.on("update", (userName, newTimetable) => {
             updateTimetable(userName, newTimetable);
@@ -60,7 +74,6 @@ function AppContextProvider({ children }) {
         setSocket(socket);
         socket.emit("eventid", event._id);
     }
-   
 
     async function goToEvent(eventId) {
         let res = await fetch(`/api/events/${eventId}`);
@@ -93,9 +106,18 @@ function AppContextProvider({ children }) {
 
         await new Promise(resolve => {
             setUser({
-                name: body.name
+                name: body.name,
+                timetable: body.timetable.map(raw => {
+                    return {
+                        id: raw._id,
+                        startDate: new Date(raw.startDate),
+                        endDate: new Date(raw.endDate)
+                    };
+                })
             }, resolve);
         });
+
+        setUpSocket();
 
         return true;
     }
