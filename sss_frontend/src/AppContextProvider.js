@@ -157,7 +157,7 @@ function AppContextProvider({ children }) {
 
         return body._id;
     }
-
+// eslint-disable-next-line
     async function updateTimetable(userName, newTimetable) {
         let newGroupTimetables = [];
         for (var i = 0; i < event.timetable.length; i++){

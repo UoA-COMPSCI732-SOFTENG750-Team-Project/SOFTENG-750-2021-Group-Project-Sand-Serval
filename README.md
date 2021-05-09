@@ -57,6 +57,16 @@ npm run start
 Then you will see the server is listening on port 3001！
 
 # Here are some screenshots:
+Home page:
+
 ![image](https://user-images.githubusercontent.com/41566813/117571514-fa395d80-b122-11eb-9a95-86c722696d9a.png)
+
+Sign in page:
+
 ![image](https://user-images.githubusercontent.com/41566813/117571526-09b8a680-b123-11eb-82e4-0b3cdd7732a5.png)
+
+
+Timetable page:
+
+![image](https://user-images.githubusercontent.com/41566813/117571791-1f7a9b80-b124-11eb-885d-26134537ade0.png)
 
