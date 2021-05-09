@@ -7,7 +7,7 @@ Go to termial, cd to frontend folder. <br>
 Run follwing commands <br>
 
 ```
-npm install --force
+npm install
 npm run start
 ```
 

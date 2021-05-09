@@ -20,8 +20,9 @@ An webapp for team meeting scheduling
 
 This is an web app developed by [Wilson](https://github.com/WilsonBaker), [Tudor](https://github.com/PisuCat), [Quang](https://github.com/femmon) and [James](https://github.com/jameszu) in SOFTENG 750/COMPSCI 732 course at the University of Auckland. <br><br>
 
-Check out our live demo [here](https://ssscheduler.netlify.app/)<br>
-
+~~Check out our live demo [here](https://ssscheduler.netlify.app/)~~<br>
+## Important Note for the live site:
+It is working but only for the frontend, we haven't set up the backend to the server so the frontend will NOT work, run the following command to check on your local machine. 
 
 # How to start the frontend
 
@@ -50,7 +51,10 @@ Run follwing commands <br>
 
 ```
 cd sss_backend
-npm install --force
+npm install
 npm run start
 ```
 Then you will see the server is listening on port 3001！
+
+# Here are some screenshots:
+
