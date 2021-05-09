@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import useStateWithCallback from './hooks/useStateWithCallback';
 
 const AppContext = React.createContext({
     event: null,
@@ -24,7 +25,7 @@ function AppContextProvider({ children }) {
             },
         ],
     });
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useStateWithCallback(null);
 
     async function signIn(name, password) {
         let res = await fetch(`/api/events/${event._id}/sign-in`, {
@@ -64,7 +65,22 @@ function AppContextProvider({ children }) {
     }
 
     async function isAuthenticated() {
-        console.warn("TODO: isAuthenticated");
+        let res = await fetch(`/api/events/${event._id}/sign-in`, {
+            method: 'POST',
+        });
+
+        if (res.status === 400) {
+            return false;
+        }
+
+        let body = await res.json();
+
+        await new Promise(resolve => {
+            setUser({
+                name: body.name
+            }, resolve);
+        });
+
         return true;
     }
 
