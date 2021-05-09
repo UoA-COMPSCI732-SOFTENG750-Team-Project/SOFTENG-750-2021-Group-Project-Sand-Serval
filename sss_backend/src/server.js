@@ -3,6 +3,8 @@ import session from 'express-session';
 import crypto from 'crypto';
 import path from 'path';
 import connectToDatabase from './db/db-connect';
+import mongoose from 'mongoose';
+import * as eventsDao from './db/events-dao';
 
 // Setup Express
 const app = express();
@@ -14,8 +16,13 @@ app.use(function (req, res, next) {
     next()
 })
 
-// Setup session middleware
-app.use(session({ secret: crypto.randomBytes(48).toString('hex') }));
+// Setup session middleware so we can access session inside of socket instance
+const httpServer = require("http").createServer(app);
+const options = { /* ... */ };
+const io = require("socket.io")(httpServer, options);
+var sessionMiddleware = session({ secret: crypto.randomBytes(48).toString('hex') })
+io.use(function(socket, next) {sessionMiddleware(socket.request, {}, next);});
+app.use(sessionMiddleware);
 
 // Setup our routes.
 import routes from './routes';
@@ -37,6 +44,31 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
+//Realtime socket implementation listner
+io.on("connection", async (socket) => {
+    //Once user has connected 
+    const session = socket.request.session;
+    console.log("User connected");
+    socket.on("eventid", (id) => {
+        socket.join(id);
+    });
+
+    //Handle update of timetable
+    socket.on("tableUpdate", async newTimetable => {
+        const event = await eventsDao.retrieveEvent(session.event);
+        const dbUser = event.users.find(user => user.name === session.name);
+        dbUser.timetable = newTimetable;
+        await event.save();
+
+        //Send out realtime alert to reupdate event group timetable
+        io.to(session.event).emit("update", session.name, newTimetable);
+      });
+
+    socket.on("disconnect", () => {
+        console.log("Client disconnected");
+      });
+});
+
 // Start the DB running. Then, once it's connected, start the server.
 connectToDatabase()
-    .then(() => app.listen(port, () => console.log(`App server listening on port ${port}!`)));
+    .then(() => httpServer.listen(port, () => console.log(`App server listening on port ${port}!`)));
