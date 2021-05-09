@@ -70,7 +70,8 @@ router.post('/:id/sign-in', async (req, res) => {
             if (dbUser) {
                 res.json({
                     eventId: id,
-                    name: req.session.name
+                    name: req.session.name,
+                    timetable: dbUser.timetable
                 });
                 return;
             }
@@ -96,7 +97,11 @@ router.post('/:id/sign-in', async (req, res) => {
 
     req.session.event = id;
     req.session.name = name;
-    res.sendStatus(HTTP_OK);
+    res.json({
+        eventId: id,
+        name: name,
+        timetable: dbUser ? dbUser.timetable : []
+    });
 });
 
 export default router;
