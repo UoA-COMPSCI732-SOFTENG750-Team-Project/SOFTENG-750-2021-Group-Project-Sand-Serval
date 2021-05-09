@@ -11,7 +11,7 @@ An webapp for team meeting scheduling
 
 
 [netlify-url]: https://ssscheduler.netlify.app/
-[netlify-badge]: https://img.shields.io/netlify/009e237a-515a-48bb-92a8-ff80506a7100?style=for-the-badge
+[netlify-badge]: https://img.shields.io/netlify/93001eba-3346-4c09-92cd-6ac7e8b579a4?style=for-the-badge
 [comment]: <> ([netlify-badge]: https://api.netlify.com/api/v1/badges/93001eba-3346-4c09-92cd-6ac7e8b579a4/deploy-status)
 
 

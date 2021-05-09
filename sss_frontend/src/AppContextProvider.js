@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import useStateWithCallback from './hooks/useStateWithCallback';
+import socketIOClient from "socket.io-client";
 
 const AppContext = React.createContext({
     event: null,
@@ -7,25 +8,32 @@ const AppContext = React.createContext({
 });
 
 function AppContextProvider({ children }) {
-    // TODO: change event to null
-    // eslint-disable-next-line
-    const [event, setEvent] = useState({
-        _id: '608ba57e2b763e2b407e6dbf',
-        userCount: 2,
-        timetable: [
-            {
-                users: ['James'],
-                startDate: new Date('Sun May 02 2021 00:30:00 GMT+1200 (New Zealand Standard Time)'),
-                endDate: new Date('Sun May 02 2021 01:00:00 GMT+1200 (New Zealand Standard Time)'),
-            },
-            {
-                users: ['James', 'Wilson'],
-                startDate: new Date('Sun May 02 2021 01:30:00 GMT+1200 (New Zealand Standard Time)'),
-                endDate: new Date('Sun May 02 2021 02:00:00 GMT+1200 (New Zealand Standard Time)'),
-            },
-        ],
-    });
+    const [event, setEvent] = useState( {
+         userCount: 0,
+         timetable: [
+             {
+                 users: [null],
+                 startDate: null,
+                 endDate: null,
+             }
+            ],
+    //         {
+    //             users: ['James', 'Wilson'],
+    //             startDate: new Date('Sun May 02 2021 01:30:00 GMT+1200 (New Zealand Standard Time)'),
+    //             endDate: new Date('Sun May 02 2021 02:00:00 GMT+1200 (New Zealand Standard Time)'),
+    //         },
+    //     ],
+     });
     const [user, setUser] = useStateWithCallback(null);
+
+    const [socket, setSocket] = useState(null);
+
+    useEffect(() => {
+        let currentSocket = socket;
+        if (currentSocket != null) {
+            return () => currentSocket.disconnect();
+        }
+    }, [socket]);
 
     async function signIn(name, password) {
         let res = await fetch(`/api/events/${event._id}/sign-in`, {
@@ -44,7 +52,15 @@ function AppContextProvider({ children }) {
         }
 
         setUser({name});
+
+        const socket = socketIOClient();
+        socket.on("update", (userName, newTimetable) => {
+            updateTimetable(userName, newTimetable);
+        });
+        setSocket(socket);
+        socket.emit("eventid", event._id);
     }
+   
 
     async function goToEvent(eventId) {
         let res = await fetch(`/api/events/${eventId}`);
@@ -85,8 +101,10 @@ function AppContextProvider({ children }) {
     }
 
     function setTimetable(timetable) {
+        socket.emit("tableUpdate", timetable);
         setUser({...user, timetable});
     }
+    
 
     async function createEvent(name, dates, from, to) {
         let res = await fetch(`/api/events/`, {
@@ -116,6 +134,12 @@ function AppContextProvider({ children }) {
         });
 
         return body._id;
+    }
+
+    async function updateTimetable(userName, newTimetable) {
+        //setEvent({...event, timetable});
+        //console.log(event.timetable);
+        //console.log(timetable);
     }
 
     // The context value that will be supplied to any descendants of this component.

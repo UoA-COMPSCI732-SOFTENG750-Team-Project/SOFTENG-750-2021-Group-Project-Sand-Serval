@@ -15,6 +15,7 @@ const EventLoading = ({children}) => {
                 history.replace('/');
             });
         }
+        // eslint-disable-next-line
     }, []);
 
     return eventIdParam !== event._id ? <p>Loading</p> : children;
