@@ -7,11 +7,13 @@ import { AppContextProvider } from './AppContextProvider';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider  } from "@material-ui/pickers";
 ReactDOM.render(
+    <React.StrictMode>
         <AppContextProvider>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <App />
             </MuiPickersUtilsProvider>
         </AppContextProvider>
+    </React.StrictMode>
     ,
   document.getElementById('root')
 );
