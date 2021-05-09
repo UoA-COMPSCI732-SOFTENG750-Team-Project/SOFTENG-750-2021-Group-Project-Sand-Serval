@@ -16,7 +16,7 @@ app.use(function (req, res, next) {
     next()
 })
 
-// Setup session middleware
+// Setup session middleware so we can access session inside of socket instance
 const httpServer = require("http").createServer(app);
 const options = { /* ... */ };
 const io = require("socket.io")(httpServer, options);
@@ -44,8 +44,9 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-//Realtime socket implementation
+//Realtime socket implementation listner
 io.on("connection", async (socket) => {
+    //Once user has connected 
     const session = socket.request.session;
     console.log("User connected");
     socket.on("eventid", (id) => {
@@ -59,6 +60,7 @@ io.on("connection", async (socket) => {
         dbUser.timetable = newTimetable;
         await event.save();
 
+        //Send out realtime alert to reupdate event group timetable
         io.to(session.event).emit("update", session.name, newTimetable);
       });
 
