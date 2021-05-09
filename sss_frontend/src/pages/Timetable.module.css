@@ -7,17 +7,25 @@
     margin: 0;
 }
 .greeting {
-    margin-bottom: 1rem;
+    margin-bottom: 2rem!important;
 }
 .topButton {
     display: flex;
     justify-content: space-between;
     align-self: auto;
     margin-bottom: 1rem;
+    text-align: center;
 }
 @media only screen and (max-width: 815px) {
     .greeting {
         font-size: 200%!important;
+        margin-bottom: 1rem!important;
+    }
+    .topButton {
+        display: flex;
+        flex-direction: column;
+        justify-content: center!important;
+        align-self: center ;
         margin-bottom: 1rem;
     }
 }

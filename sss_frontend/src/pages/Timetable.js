@@ -28,6 +28,7 @@ export default function Timetable() {
                 setViewOnly(false);
             }
         });
+        // eslint-disable-next-line
     }, []);
 
     if (viewOnly) {
@@ -45,6 +46,8 @@ export default function Timetable() {
                     Copy the link
                 </Button>
             </CopyToClipboard>
+            <Typography>{url}</Typography>
+
             <Switch
                 checked={mode === MODE.GROUP}
                 onChange={checked => setMode(checked ? MODE.GROUP : MODE.USER)}
