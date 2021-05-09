@@ -6,3 +6,18 @@
     color: white;
     margin: 0;
 }
+.greeting {
+    margin-bottom: 1rem;
+}
+.topButton {
+    display: flex;
+    justify-content: space-between;
+    align-self: auto;
+    margin-bottom: 1rem;
+}
+@media only screen and (max-width: 815px) {
+    .greeting {
+        font-size: 200%!important;
+        margin-bottom: 1rem;
+    }
+}

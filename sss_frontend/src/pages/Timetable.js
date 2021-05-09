@@ -1,11 +1,12 @@
 import {useContext, useEffect, useState} from 'react';
 import Switch from 'react-switch';
 import {useHistory, useParams} from 'react-router-dom';
-import {Typography} from '@material-ui/core';
+import {Typography, Divider, Button} from '@material-ui/core';
 import UserTimetable from '../components/UserTimetable';
 import styles from './Timetable.module.css';
 import GroupTimetable from '../components/GroupTimetable';
 import {AppContext} from '../AppContextProvider';
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 const MODE = {
     USER: 'USER',
@@ -15,7 +16,7 @@ const MODE = {
 export default function Timetable() {
     const history = useHistory();
     const { eventId: eventIdParam } = useParams();
-    const { event, isAuthenticated } = useContext(AppContext);
+    const { user, event, isAuthenticated } = useContext(AppContext);
     const [viewOnly, setViewOnly] = useState(true);
     const [mode, setMode] = useState(MODE.USER);
 
@@ -32,9 +33,18 @@ export default function Timetable() {
     if (viewOnly) {
         return <p>Loading</p>;
     }
-
+    let url = window.location.href;
+    url = url.substring(0, url.length-9) + "sign-in";
     return (
         <>
+        <div className={styles.topButton}>
+            <CopyToClipboard text={url}>
+                <Button variant="contained"  
+                        style={{height: "100%", backgroundColor: '#4E9BFF', color: '#FFFFFF'}}
+                        >
+                    Copy the link
+                </Button>
+            </CopyToClipboard>
             <Switch
                 checked={mode === MODE.GROUP}
                 onChange={checked => setMode(checked ? MODE.GROUP : MODE.USER)}
@@ -42,16 +52,20 @@ export default function Timetable() {
                 checkedHandleIcon={<p className={styles.switchComponent}>Group</p>}
                 uncheckedIcon={<p className={styles.switchComponent}>Group</p>}
                 uncheckedHandleIcon={<p className={styles.switchComponent}>My</p>}
-                handleDiameter={50}
-                height={58}
-                width={120}
-                borderRadius={20}
+                handleDiameter={40}
+                height={40}
+                width={110}
+                borderRadius={15}
                 onColor={'#5CFC6C'}
                 onHandleColor={'#C4C4C4'}
                 offColor={'#C4C4C4'}
                 offHandleColor={'#5CFC6C'}
             />
-            <Typography variant="h3" align={'center'}>Event: {event.name}</Typography>
+            
+        </div>
+            <Typography variant="h3" align={'center'} className={styles.greeting}>Welcome to the event [{event.name}], {user.name} </Typography>
+            <Divider />
+
             {mode === MODE.USER ? <UserTimetable/> : <GroupTimetable/>}
         </>
     );
