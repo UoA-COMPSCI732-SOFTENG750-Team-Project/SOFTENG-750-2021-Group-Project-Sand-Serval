@@ -39,8 +39,8 @@ export default function Home(props) {
             return;
         }
         createEvent(name, [dates[0].startDate, dates[0].endDate], from, to)
-            .then(() => {
-                history.push("/sign-in");
+            .then(eventId => {
+                history.push(`/${eventId}/sign-in`);
             })
             .catch(e => window.alert(e))
     }
