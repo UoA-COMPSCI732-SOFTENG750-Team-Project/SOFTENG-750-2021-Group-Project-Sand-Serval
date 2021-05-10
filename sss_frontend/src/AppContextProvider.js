@@ -146,6 +146,7 @@ function AppContextProvider({ children }) {
         return body._id;
     }
 
+    // Variant: `newTimetables`, `newGroupTimetables` contain no overlap
     const updateTimetable = async (userName, newTimetables) => {
         let newGroupTimetables = [];
         for (let i = 0; i < event.timetable.length; i++){
@@ -159,86 +160,65 @@ function AppContextProvider({ children }) {
             }
         }
 
-        if (newGroupTimetables.length === 0) {
-            newGroupTimetables = newTimetables.map(newTimetable => {
-                return {
-                    users: [userName],
-                    startDate: newTimetable.startDate,
-                    endDate: newTimetable.endDate,
-                }
-            })
-            setEvent({ ...event, timetable: newGroupTimetables})
-            return;
-        }
-
-        // precondition is that newGroupTimetables doesn't contain overlap
         while (newTimetables.length !== 0) {
             let newTimetable = newTimetables.pop();
 
             let processedNewGroupTimetables = [];
 
-            while (newGroupTimetables.length !== 0) {
+            let isMatch = false;
+            while (newGroupTimetables.length !== 0 && !isMatch) {
                 let groupTimetable = newGroupTimetables.pop();
 
                 let newTimetableSections = split(newTimetable, groupTimetable.startDate, groupTimetable.endDate);
                 let groupTimetableSections = split(groupTimetable, newTimetable.startDate, newTimetable.endDate);
 
-                // the sections from 2 groups that is matched will be merged, and put into processedNewGroupTimetables
-                newTimetableSections.forEach((newTimetableSection, i) => {
-                    groupTimetableSections.forEach((groupTimetableSection, j) => {
+                // The sections from 2 groups that is matched will be merged, and put into processedNewGroupTimetables
+                for (let i = 0; i < newTimetableSections.length && !isMatch; i++) {
+                    let newTimetableSection = newTimetableSections[i];
+
+                    for (let j = 0; j < groupTimetableSections.length; j++) {
+                        let groupTimetableSection = groupTimetableSections[j];
+
                         if (newTimetableSection.startDate.getTime() === groupTimetableSection.startDate.getTime() &&
                             newTimetableSection.endDate.getTime() === groupTimetableSection.endDate.getTime()) {
+
+                            // Remove the match from the sections
                             newTimetableSections.splice(i, 1);
                             groupTimetableSections.splice(j, 1);
+
                             groupTimetableSection.users.push(userName);
                             processedNewGroupTimetables.push(groupTimetableSection);
+
+                            // leftover from newTimetableSections will be put back into newTimetables
+                            newTimetables.push(...newTimetableSections);
+                            // leftover from groupTimetableSections will be put back into newGroupTimetables
+                            processedNewGroupTimetables.push(...groupTimetableSections);
+
+                            isMatch = true;
+                            break;
                         }
-                    });
-                });
-                
-                // leftover from newTimetableSections will be put back into newTimetables
-                newTimetables.push(...newTimetableSections);
-                // leftover from groupTimetableSections will be put back into newGroupTimetables
-                newGroupTimetables.push(...groupTimetableSections);
+                    }
+                }
+
+                if (isMatch) {
+                    break;
+                } else {
+                    processedNewGroupTimetables.push(groupTimetable);
+                }
             }
-            newGroupTimetables = processedNewGroupTimetables;
+
+            if (!isMatch) {
+                newGroupTimetables.push({
+                    users: [userName],
+                    startDate: newTimetable.startDate,
+                    endDate: newTimetable.endDate
+                })
+            }
+
+            // `newGroupTimetables` probably still contains something, if we stop because of a match
+            newGroupTimetables = [...newGroupTimetables, ...processedNewGroupTimetables];
         }
         setEvent({ ...event, timetable: newGroupTimetables})
-    }
-
-    function split(newTimetableSlot, ...splitDates) {
-        let users = newTimetableSlot.users;
-        let result = [];
-        if (splitDates[0].getTime() > newTimetableSlot.startDate.getTime() && splitDates[0].getTime() < newTimetableSlot.endDate.getTime()) {
-            result.push({
-                users,
-                startDate: newTimetableSlot.startDate,
-                endDate: splitDates[0]
-            })
-
-            result.push({
-                users,
-                startDate: splitDates[0],
-                endDate: newTimetableSlot.endDate
-            })
-            
-        } else {
-            result.push(newTimetableSlot);
-        }
-
-        if (splitDates[1].getTime() > result[result.length - 1].startDate.getTime() && splitDates[1].getTime() < result[result.length - 1].endDate.getTime()) {
-            let secondHalfEndDate = result[result.length - 1].endDate;
-            let firstHalf = result.pop();
-            firstHalf.endDate = splitDates[1];
-            result.push(firstHalf);
-            result.push({
-                users,
-                startDate: splitDates[1],
-                endDate: secondHalfEndDate
-            })
-        }
-
-        return result;
     }
 
     // The context value that will be supplied to any descendants of this component.
@@ -261,7 +241,33 @@ function AppContextProvider({ children }) {
     );
 }
 
+function split(timeSlot, ...splitDates) {
+    // Make sure splitDates is sorted from old to new
+    splitDates.sort((date1, date2) => date1.getTime() - date2.getTime())
+    let users = timeSlot.users;
+    let result = [timeSlot];
+
+    for (let splitDate of splitDates) {
+        if (splitDate.getTime() > result[result.length - 1].startDate.getTime() &&
+            splitDate.getTime() < result[result.length - 1].endDate.getTime()) {
+            let secondHalfEndDate = result[result.length - 1].endDate;
+            let firstHalf = result.pop();
+            firstHalf.endDate = splitDate;
+            result.push(firstHalf);
+
+            result.push({
+                users,
+                startDate: splitDate,
+                endDate: secondHalfEndDate
+            })
+        }
+    }
+
+    return result;
+}
+
 export {
     AppContext,
-    AppContextProvider
+    AppContextProvider,
+    split,
 };
