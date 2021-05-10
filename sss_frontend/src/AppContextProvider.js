@@ -10,13 +10,7 @@ const AppContext = React.createContext({
 function AppContextProvider({ children }) {
     const [event, setEvent] = useState( {
          userCount: 0,
-         timetable: [
-             {
-                 users: [null],
-                 startDate: null,
-                 endDate: null,
-             }
-            ],
+         timetable: [],
     //         {
     //             users: ['James', 'Wilson'],
     //             startDate: new Date('Sun May 02 2021 01:30:00 GMT+1200 (New Zealand Standard Time)'),
@@ -55,7 +49,12 @@ function AppContextProvider({ children }) {
 
         const socket = socketIOClient();
         socket.on("update", (userName, newTimetable) => {
-            updateTimetable(userName, newTimetable);
+            updateTimetable(userName, newTimetable.map(newTimetable => {
+                return {
+                    startDate: new Date(newTimetable.startDate),
+                    endDate: new Date(newTimetable. endDate)
+                }
+            }));
         });
         setSocket(socket);
         socket.emit("eventid", event._id);
@@ -141,12 +140,24 @@ function AppContextProvider({ children }) {
         for (var i = 0; i < event.timetable.length; i++){
             let groupTimetable = {
                 users: event.timetable[i].users.filter(existingUserName => existingUserName !== userName),
-                startDate: event.timetable[i].startDate,
-                endDate: event.timetable[i].endDate,
+                    startDate: event.timetable[i].startDate,
+                    endDate: event.timetable[i].endDate,
             }
             if (groupTimetable.users.length !== 0) {
                 newGroupTimetables.push(groupTimetable);
             }
+        }
+
+        if (newGroupTimetables.length === 0) {
+            newGroupTimetables = newTimetables.map(newTimetable => {
+                return {
+                    users: userName,
+                    startDate: newTimetable.startDate,
+                    endDate: newTimetable.endDate,
+                }
+            })
+            setEvent({ ...event, timetable: newGroupTimetables})
+            return;
         }
 
         // precondition is that newGroupTimetables doesn't contain overlap
@@ -178,9 +189,8 @@ function AppContextProvider({ children }) {
                 newTimetables.push(...newTimetableSections);
                 // leftover from groupTimetableSections will be put back into newGroupTimetables
                 newGroupTimetables.push(...groupTimetableSections);
-
-                newGroupTimetables = processedNewGroupTimetables;
             }
+            newGroupTimetables = processedNewGroupTimetables;
         }
         setEvent({ ...event, timetable: newGroupTimetables})
     }
