@@ -60,4 +60,9 @@ describe('Test `split(timeSlot, ...splitDates)', () => {
         expect(result[1].startDate).toEqual(date300);
         expect(result[1].endDate).toEqual(date400);
     });
+
+    it('Split at the edge', () => {
+        expect(split(timeSlot, date200).length).toBe(1);
+        expect(split(timeSlot, date400).length).toBe(1);
+    });
 });
