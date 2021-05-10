@@ -29,7 +29,7 @@ function AppContextProvider({ children }) {
         }
     }, [socket]);
 
-    async function signIn(name, password) {
+    const signIn = async (name, password) => {
         let res = await fetch(`/api/events/${event._id}/sign-in`, {
             method: 'POST',
             headers: {
@@ -46,8 +46,18 @@ function AppContextProvider({ children }) {
         }
 
         setUser({name});
+    }
 
+    useEffect(() => {
         const socket = socketIOClient();
+        setSocket(socket);
+    }, [user]);
+
+    useEffect(() => {
+        if (!socket) {
+            return;
+        }
+
         socket.on("update", (userName, newTimetable) => {
             updateTimetable(userName, newTimetable.map(newTimetable => {
                 return {
@@ -56,10 +66,8 @@ function AppContextProvider({ children }) {
                 }
             }));
         });
-        setSocket(socket);
         socket.emit("eventid", event._id);
-    }
-   
+    }, [socket, event.timetable])
 
     async function goToEvent(eventId) {
         let res = await fetch(`/api/events/${eventId}`);
@@ -69,14 +77,17 @@ function AppContextProvider({ children }) {
         let body = await res.json();
 
         setEvent({
-            // TODO: probably remove the next line when removing the hardcoded data at `const [event, setEvent]`
-            ...event,
             _id: body._id,
             name: body.name,
             dates: body.dates.map(string => new Date(string)),
             from: new Date(body.from),
-            to: new Date(body.to)
+            to: new Date(body.to),
+            timetable: createGroupTimetables()
         });
+    }
+
+    function createGroupTimetables() {
+        return [];
     }
 
     async function isAuthenticated() {
@@ -124,20 +135,20 @@ function AppContextProvider({ children }) {
         let body = await res.json();
 
         setEvent({
-            ...event,
             _id: body._id,
             name,
             dates,
             from,
-            to
+            to,
+            timetable: []
         });
 
         return body._id;
     }
 
-    async function updateTimetable(userName, newTimetables) {
+    const updateTimetable = async (userName, newTimetables) => {
         let newGroupTimetables = [];
-        for (var i = 0; i < event.timetable.length; i++){
+        for (let i = 0; i < event.timetable.length; i++){
             let groupTimetable = {
                 users: event.timetable[i].users.filter(existingUserName => existingUserName !== userName),
                     startDate: event.timetable[i].startDate,
@@ -151,7 +162,7 @@ function AppContextProvider({ children }) {
         if (newGroupTimetables.length === 0) {
             newGroupTimetables = newTimetables.map(newTimetable => {
                 return {
-                    users: userName,
+                    users: [userName],
                     startDate: newTimetable.startDate,
                     endDate: newTimetable.endDate,
                 }
@@ -177,8 +188,8 @@ function AppContextProvider({ children }) {
                     groupTimetableSections.forEach((groupTimetableSection, j) => {
                         if (newTimetableSection.startDate.getTime() === groupTimetableSection.startDate.getTime() &&
                             newTimetableSection.endDate.getTime() === groupTimetableSection.endDate.getTime()) {
-                            newTimetableSection.splice(i, 1);
-                            groupTimetableSection.splice(j, 1);
+                            newTimetableSections.splice(i, 1);
+                            groupTimetableSections.splice(j, 1);
                             groupTimetableSection.users.push(userName);
                             processedNewGroupTimetables.push(groupTimetableSection);
                         }
@@ -220,14 +231,14 @@ function AppContextProvider({ children }) {
             let firstHalf = result.pop();
             firstHalf.endDate = splitDates[1];
             result.push(firstHalf);
-
             result.push({
                 users,
                 startDate: splitDates[1],
                 endDate: secondHalfEndDate
             })
-
         }
+
+        return result;
     }
 
     // The context value that will be supplied to any descendants of this component.
