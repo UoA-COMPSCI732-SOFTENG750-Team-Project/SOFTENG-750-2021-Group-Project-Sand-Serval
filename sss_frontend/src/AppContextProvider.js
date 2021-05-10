@@ -149,45 +149,75 @@ function AppContextProvider({ children }) {
             }
         }
 
+        // precondition is that newGroupTimetables doesn't contain overlap
         while (newTimetables.length !== 0) {
             let newTimetable = newTimetables.pop();
 
-            newGroupTimetables.forEach(groupTimetable => {
-                if (newTimetable.endDate.getTime() < groupTimetable.startDate.getTime()) {
-                    // skip
-                } else if (newTimetable.startDate.getTime() < groupTimetable.startDate.getTime() &&
-                    newTimetable.endDate.getTime() < groupTimetable.endDate.getTime()) {
-                        //Split at group startDate
-                        //Goes until newTimetable endDate
-                } else if (newTimetable.startDate.getTime() > groupTimetable.startDate.getTime() &&
-                    newTimetable.endDate.getTime() < groupTimetable.endDate.getTime()) {
+            let processedNewGroupTimetables = [];
 
-                } else if (newTimetable.startDate.getTime() > groupTimetable.startDate.getTime() &&
-                    newTimetable.endDate.getTime() > groupTimetable.endDate.getTime()) {
+            while (newGroupTimetables.length !== 0) {
+                let groupTimetable = newGroupTimetables.pop();
 
-                } else if (newTimetable.startDate.getTime() > groupTimetable.endDate.getTime()) {
-                    // skip
-                }
-            });
-        }
-        newTimetables.forEach(newTimetable => {
-            let newNewGroupTimetables = [];
-            //CheckEveryGroupForUniqueTimeSlot checks if current timeslot endDate before all group startDate
+                let newTimetableSections = split(newTimetable, groupTimetable.startDate, groupTimetable.endDate);
+                let groupTimetableSections = split(groupTimetable, newTimetable.startDate, newTimetable.endDate);
 
-            newGroupTimetables.forEach(groupTimetable => {
-                if (newTimetable.endDate.getTime() < groupTimetable.startDate.getTime()) {
-                    newNewGroupTimetables.push({
-                        users: [userName],
-                        startDate: 
+                // the sections from 2 groups that is matched will be merged, and put into processedNewGroupTimetables
+                newTimetableSections.forEach((newTimetableSection, i) => {
+                    groupTimetableSections.forEach((groupTimetableSection, j) => {
+                        if (newTimetableSection.startDate.getTime() === groupTimetableSection.startDate.getTime() &&
+                            newTimetableSection.endDate.getTime() === groupTimetableSection.endDate.getTime()) {
+                            newTimetableSection.splice(i, 1);
+                            groupTimetableSection.splice(j, 1);
+                            groupTimetableSection.users.push(userName);
+                            processedNewGroupTimetables.push(groupTimetableSection);
+                        }
                     });
-                }
-            });
-        });
-        
-        setEvent({...event, timetable: newTimetables})
-        //setEvent({...event, timetable});
-        //console.log(event.timetable);
-        //console.log(timetable);
+                });
+                
+                // leftover from newTimetableSections will be put back into newTimetables
+                newTimetables.push(...newTimetableSections);
+                // leftover from groupTimetableSections will be put back into newGroupTimetables
+                newGroupTimetables.push(...groupTimetableSections);
+
+                newGroupTimetables = processedNewGroupTimetables;
+            }
+        }
+        setEvent({ ...event, timetable: newGroupTimetables})
+    }
+
+    function split(newTimetableSlot, ...splitDates) {
+        let users = newTimetableSlot.users;
+        let result = [];
+        if (splitDates[0].getTime() > newTimetableSlot.startDate.getTime() && splitDates[0].getTime() < newTimetableSlot.endDate.getTime()) {
+            result.push({
+                users,
+                startDate: newTimetableSlot.startDate,
+                endDate: splitDates[0]
+            })
+
+            result.push({
+                users,
+                startDate: splitDates[0],
+                endDate: newTimetableSlot.endDate
+            })
+            
+        } else {
+            result.push(newTimetableSlot);
+        }
+
+        if (splitDates[1].getTime() > result[result.length - 1].startDate.getTime() && splitDates[1].getTime() < result[result.length - 1].endDate.getTime()) {
+            let secondHalfEndDate = result[result.length - 1].endDate;
+            let firstHalf = result.pop();
+            firstHalf.endDate = splitDates[1];
+            result.push(firstHalf);
+
+            result.push({
+                users,
+                startDate: splitDates[1],
+                endDate: secondHalfEndDate
+            })
+
+        }
     }
 
     // The context value that will be supplied to any descendants of this component.
