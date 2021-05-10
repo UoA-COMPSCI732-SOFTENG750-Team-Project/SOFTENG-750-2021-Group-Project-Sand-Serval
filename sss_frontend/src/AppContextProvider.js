@@ -59,12 +59,13 @@ function AppContextProvider({ children }) {
         }
 
         socket.on("update", (userName, newTimetable) => {
-            updateTimetable(userName, newTimetable.map(newTimetable => {
+            let newGroupTimetables = updateTimetable(event.timetable, userName, newTimetable.map(newTimetable => {
                 return {
                     startDate: new Date(newTimetable.startDate),
                     endDate: new Date(newTimetable. endDate)
                 }
             }));
+            setEvent({ ...event, timetable: newGroupTimetables});
         });
         socket.emit("eventid", event._id);
     }, [socket, event.timetable])
@@ -146,81 +147,6 @@ function AppContextProvider({ children }) {
         return body._id;
     }
 
-    // Variant: `newTimetables`, `newGroupTimetables` contain no overlap
-    const updateTimetable = async (userName, newTimetables) => {
-        let newGroupTimetables = [];
-        for (let i = 0; i < event.timetable.length; i++){
-            let groupTimetable = {
-                users: event.timetable[i].users.filter(existingUserName => existingUserName !== userName),
-                    startDate: event.timetable[i].startDate,
-                    endDate: event.timetable[i].endDate,
-            }
-            if (groupTimetable.users.length !== 0) {
-                newGroupTimetables.push(groupTimetable);
-            }
-        }
-
-        while (newTimetables.length !== 0) {
-            let newTimetable = newTimetables.pop();
-
-            let processedNewGroupTimetables = [];
-
-            let isMatch = false;
-            while (newGroupTimetables.length !== 0 && !isMatch) {
-                let groupTimetable = newGroupTimetables.pop();
-
-                let newTimetableSections = split(newTimetable, groupTimetable.startDate, groupTimetable.endDate);
-                let groupTimetableSections = split(groupTimetable, newTimetable.startDate, newTimetable.endDate);
-
-                // The sections from 2 groups that is matched will be merged, and put into processedNewGroupTimetables
-                for (let i = 0; i < newTimetableSections.length && !isMatch; i++) {
-                    let newTimetableSection = newTimetableSections[i];
-
-                    for (let j = 0; j < groupTimetableSections.length; j++) {
-                        let groupTimetableSection = groupTimetableSections[j];
-
-                        if (newTimetableSection.startDate.getTime() === groupTimetableSection.startDate.getTime() &&
-                            newTimetableSection.endDate.getTime() === groupTimetableSection.endDate.getTime()) {
-
-                            // Remove the match from the sections
-                            newTimetableSections.splice(i, 1);
-                            groupTimetableSections.splice(j, 1);
-
-                            groupTimetableSection.users.push(userName);
-                            processedNewGroupTimetables.push(groupTimetableSection);
-
-                            // leftover from newTimetableSections will be put back into newTimetables
-                            newTimetables.push(...newTimetableSections);
-                            // leftover from groupTimetableSections will be put back into newGroupTimetables
-                            processedNewGroupTimetables.push(...groupTimetableSections);
-
-                            isMatch = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (isMatch) {
-                    break;
-                } else {
-                    processedNewGroupTimetables.push(groupTimetable);
-                }
-            }
-
-            if (!isMatch) {
-                newGroupTimetables.push({
-                    users: [userName],
-                    startDate: newTimetable.startDate,
-                    endDate: newTimetable.endDate
-                })
-            }
-
-            // `newGroupTimetables` probably still contains something, if we stop because of a match
-            newGroupTimetables = [...newGroupTimetables, ...processedNewGroupTimetables];
-        }
-        setEvent({ ...event, timetable: newGroupTimetables})
-    }
-
     // The context value that will be supplied to any descendants of this component.
     const context = {
         event,
@@ -239,6 +165,85 @@ function AppContextProvider({ children }) {
             {children}
         </AppContext.Provider>
     );
+}
+
+// Variant: `newTimetables`, `newGroupTimetables` contain no overlap
+const updateTimetable = (groupTimetables, userName, newTimetables) => {
+    let newGroupTimetables = [];
+    for (let i = 0; i < groupTimetables.length; i++){
+        let groupTimetable = {
+            users: groupTimetables[i].users.filter(existingUserName => existingUserName !== userName),
+            startDate: groupTimetables[i].startDate,
+            endDate: groupTimetables[i].endDate,
+        }
+        if (groupTimetable.users.length !== 0) {
+            newGroupTimetables.push(groupTimetable);
+        }
+    }
+
+    // Find a match for one newTimetable each loop. If there is no match then create new group slot
+    while (newTimetables.length !== 0) {
+        let newTimetable = newTimetables.pop();
+
+        let processedNewGroupTimetables = [];
+
+        let isMatch = false;
+        // Process a groupTimetable slot each loop.
+        // It might get broken into smaller slot and put back into `newGroupTimetables`
+        while (newGroupTimetables.length !== 0 && !isMatch) {
+            let groupTimetable = newGroupTimetables.pop();
+
+            let newTimetableSections = split(newTimetable, groupTimetable.startDate, groupTimetable.endDate);
+            let groupTimetableSections = split(groupTimetable, newTimetable.startDate, newTimetable.endDate);
+
+            // The sections from 2 groups that is matched will be merged, and put into processedNewGroupTimetables
+            for (let i = 0; i < newTimetableSections.length && !isMatch; i++) {
+                let newTimetableSection = newTimetableSections[i];
+
+                for (let j = 0; j < groupTimetableSections.length; j++) {
+                    let groupTimetableSection = groupTimetableSections[j];
+
+                    if (newTimetableSection.startDate.getTime() === groupTimetableSection.startDate.getTime() &&
+                        newTimetableSection.endDate.getTime() === groupTimetableSection.endDate.getTime()) {
+
+                        // Remove the match from the sections
+                        newTimetableSections.splice(i, 1);
+                        groupTimetableSections.splice(j, 1);
+
+                        groupTimetableSection.users.push(userName);
+                        processedNewGroupTimetables.push(groupTimetableSection);
+
+                        // leftover from newTimetableSections will be put back into newTimetables
+                        newTimetables.push(...newTimetableSections);
+                        // leftover from groupTimetableSections will be put back into newGroupTimetables
+                        processedNewGroupTimetables.push(...groupTimetableSections);
+
+                        isMatch = true;
+                        break;
+                    }
+                }
+            }
+
+            if (isMatch) {
+                break;
+            } else {
+                processedNewGroupTimetables.push(groupTimetable);
+            }
+        }
+
+        if (!isMatch) {
+            newGroupTimetables.push({
+                users: [userName],
+                startDate: newTimetable.startDate,
+                endDate: newTimetable.endDate
+            })
+        }
+
+        // `newGroupTimetables` probably still contains something, if we stop because of a match
+        newGroupTimetables.push(...processedNewGroupTimetables);
+    }
+
+    return newGroupTimetables;
 }
 
 function split(timeSlot, ...splitDates) {
