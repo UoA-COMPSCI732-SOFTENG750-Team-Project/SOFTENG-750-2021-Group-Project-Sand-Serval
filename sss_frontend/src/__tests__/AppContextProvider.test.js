@@ -8,17 +8,18 @@ describe('Test `split(timeSlot, ...splitDates)', () => {
     const date500 = new Date(500000000000);
 
     let timeSlot;
-
-    const timeSlotWithUsers = {
-        ...timeSlot,
-        users: []
-    }
+    let timeSlotWithUsers;
 
     beforeEach(() => {
         timeSlot = {
             startDate: date200,
             endDate: date400,
         };
+
+        timeSlotWithUsers = {
+            ...timeSlot,
+            users: []
+        }
     })
 
     it('1 split date within time slot', () => {
@@ -64,5 +65,11 @@ describe('Test `split(timeSlot, ...splitDates)', () => {
     it('Split at the edge', () => {
         expect(split(timeSlot, date200).length).toBe(1);
         expect(split(timeSlot, date400).length).toBe(1);
+    });
+
+    it('In the result, the properties of one time slot can\'t share references with the properties another time slots', () => {
+        let result = split(timeSlotWithUsers, date300)
+        expect(result[0].users).not.toBe(result[1].users);
+        expect(result[0].endDate).not.toBe(result[1].startDate);
     });
 });

@@ -246,11 +246,17 @@ const updateTimetable = (groupTimetables, userName, newTimetables) => {
     return newGroupTimetables;
 }
 
+// Made sure the return slots aren't connected to each other
+// (like the array users of each slot are a separate object)
 function split(timeSlot, ...splitDates) {
     // Make sure splitDates is sorted from old to new
     splitDates.sort((date1, date2) => date1.getTime() - date2.getTime())
     let users = timeSlot.users;
-    let result = [timeSlot];
+    let result = [{
+        users: users && [...users],
+        startDate: new Date(timeSlot.startDate),
+        endDate: new Date(timeSlot.endDate),
+    }];
 
     for (let splitDate of splitDates) {
         if (splitDate.getTime() > result[result.length - 1].startDate.getTime() &&
@@ -261,8 +267,8 @@ function split(timeSlot, ...splitDates) {
             result.push(firstHalf);
 
             result.push({
-                users,
-                startDate: splitDate,
+                users: users && [...users],
+                startDate: new Date(splitDate),
                 endDate: secondHalfEndDate
             })
         }
