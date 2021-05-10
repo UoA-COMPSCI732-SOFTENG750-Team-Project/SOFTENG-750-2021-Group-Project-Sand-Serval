@@ -169,6 +169,8 @@ function AppContextProvider({ children }) {
 
 // Variant: `newTimetables`, `newGroupTimetables` contain no overlap
 const updateTimetable = (groupTimetables, userName, newTimetables) => {
+    let result = [];
+
     let newGroupTimetables = [];
     for (let i = 0; i < groupTimetables.length; i++){
         let groupTimetable = {
@@ -211,12 +213,14 @@ const updateTimetable = (groupTimetables, userName, newTimetables) => {
                         groupTimetableSections.splice(j, 1);
 
                         groupTimetableSection.users.push(userName);
-                        processedNewGroupTimetables.push(groupTimetableSection);
+                        // There is no need for `groupTimetableSection` to be put back into `processedNewGroupTimetables`
+                        // Since it will not be match again
+                        result.push(groupTimetableSection);
 
                         // leftover from newTimetableSections will be put back into newTimetables
                         newTimetables.push(...newTimetableSections);
                         // leftover from groupTimetableSections will be put back into newGroupTimetables
-                        processedNewGroupTimetables.push(...groupTimetableSections);
+                        newGroupTimetables.push(...groupTimetableSections);
 
                         isMatch = true;
                         break;
@@ -243,7 +247,8 @@ const updateTimetable = (groupTimetables, userName, newTimetables) => {
         newGroupTimetables.push(...processedNewGroupTimetables);
     }
 
-    return newGroupTimetables;
+    result.push(...newGroupTimetables);
+    return result;
 }
 
 // Made sure the return slots aren't connected to each other
