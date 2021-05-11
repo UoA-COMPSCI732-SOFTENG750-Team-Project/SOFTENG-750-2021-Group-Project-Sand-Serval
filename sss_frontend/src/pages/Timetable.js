@@ -87,7 +87,6 @@ export default function Timetable() {
             <Switch
                 checked={mode === MODE.GROUP}
                 onChange={checked => setMode(checked ? MODE.GROUP : MODE.USER)}
-                onClick={event=>bestTime(event.timetable)}
                 checkedIcon={<p className={styles.switchComponent}>My</p>}
                 checkedHandleIcon={<p className={styles.switchComponent}>Group</p>}
                 uncheckedIcon={<p className={styles.switchComponent}>Group</p>}
