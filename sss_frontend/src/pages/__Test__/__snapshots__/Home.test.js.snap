@@ -9,6 +9,7 @@ exports[`snapshot with no content matches 1`] = `
   </div>
   <div
     className="MuiFormControl-root MuiTextField-root"
+    onKeyDown={[Function]}
   >
     <label
       className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated Mui-required Mui-required"
@@ -86,7 +87,7 @@ exports[`snapshot with no content matches 1`] = `
                 onKeyDown={[Function]}
                 placeholder="Early"
                 readOnly={false}
-                value="May 9, 2021"
+                value="May 11, 2021"
               />
             </span>
             <span
@@ -100,7 +101,7 @@ exports[`snapshot with no content matches 1`] = `
                 onKeyDown={[Function]}
                 placeholder="Continuous"
                 readOnly={false}
-                value="May 9, 2021"
+                value="May 11, 2021"
               />
             </span>
           </div>
@@ -1237,7 +1238,7 @@ exports[`snapshot with no content matches 1`] = `
                 </span>
               </button>
               <button
-                className="rdrDay rdrDayToday rdrDayWeekend rdrDayStartOfWeek"
+                className="rdrDay rdrDayWeekend rdrDayStartOfWeek"
                 onBlur={[Function]}
                 onFocus={[Function]}
                 onKeyDown={[Function]}
@@ -1254,14 +1255,6 @@ exports[`snapshot with no content matches 1`] = `
                 }
                 type="button"
               >
-                <span
-                  className="rdrStartEdge rdrEndEdge"
-                  style={
-                    Object {
-                      "color": "#3d91ff",
-                    }
-                  }
-                />
                 <span
                   className="rdrDayNumber"
                 >
@@ -1297,7 +1290,7 @@ exports[`snapshot with no content matches 1`] = `
                 </span>
               </button>
               <button
-                className="rdrDay"
+                className="rdrDay rdrDayToday"
                 onBlur={[Function]}
                 onFocus={[Function]}
                 onKeyDown={[Function]}
@@ -1314,6 +1307,14 @@ exports[`snapshot with no content matches 1`] = `
                 }
                 type="button"
               >
+                <span
+                  className="rdrStartEdge rdrEndEdge"
+                  style={
+                    Object {
+                      "color": "#3d91ff",
+                    }
+                  }
+                />
                 <span
                   className="rdrDayNumber"
                 >

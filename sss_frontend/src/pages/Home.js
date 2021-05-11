@@ -71,7 +71,6 @@ export default function Home(props) {
                        onKeyDown={keyPress}
                        onChange={(event) => {
                            setName(event.target.value); 
-                        //    console.log(event.target.value); 
                            setError(null)
                         }}
                         inputProps={{min: 0, style: { textAlign: 'center'}}} 
@@ -80,15 +79,13 @@ export default function Home(props) {
             </TextField>
             
             
-            {/* <Wrapper/> */}
             <div className={styles.midSection}>
                 <div className={styles.dates} >
                     <Typography 
                         variant="h5" 
                         color='inherit'
                         className={styles.chooseDate}
-                        > 
-
+                    >
                         Choose Dates
                     </Typography>
                     <DateRange

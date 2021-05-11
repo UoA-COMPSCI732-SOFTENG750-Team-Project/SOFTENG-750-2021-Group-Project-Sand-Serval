@@ -106,7 +106,7 @@ export default function Timetable() {
             <Typography variant="h3" align={'center'} className={styles.greeting}>Welcome to the event [{event.name}], {user.name} </Typography>
             <Divider />
             <Typography variant="h6" align={'center'}>The best time would be: <br/> </Typography>
-            <Typography variant="h6" align={'center'} color="secondary"className={styles.bestTime}>{besttime} </Typography>
+            <Typography variant="h6" align={'center'} color="secondary" className={styles.bestTime}>{besttime} </Typography>
 
             {mode === MODE.USER ? <UserTimetable/> : <GroupTimetable/>}
         </>
