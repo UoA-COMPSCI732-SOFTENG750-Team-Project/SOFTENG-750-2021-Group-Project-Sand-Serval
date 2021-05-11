@@ -27,8 +27,25 @@ export default function Home(props) {
         }
       ]);
 
-    const [from, setFrom] = useState(new Date("May 1, 2021 09:00:00"));
-    const [to, setTo] = useState(new Date("May 1, 2021 22:00:00"));
+    const [from, simpleSetFrom] = useState(new Date("May 1, 2021 09:00:00"));
+    const [to, simpleSetTo] = useState(new Date("May 1, 2021 22:00:00"));
+    const setFrom = newFrom => {
+        if (newFrom.getHours() >= to.getHours()) {
+            let newTo = new Date(newFrom);
+            newTo.setHours(newFrom.getHours() + 1);
+            simpleSetTo(newTo);
+        }
+        simpleSetFrom(newFrom);
+    };
+    const setTo = newTo => {
+        if (newTo.getHours() <= from.getHours()) {
+            let newFrom = new Date(newTo);
+            newFrom.setHours(newTo.getHours() - 1);
+            simpleSetFrom(newFrom);
+        }
+        simpleSetTo(newTo);
+    };
+
     const [error, setError] = useState("");
 
     const { createEvent } = useContext(AppContext);
@@ -46,7 +63,7 @@ export default function Home(props) {
             })
             .catch(e => window.alert(e))
     }
-    // console.log(typeof(from));
+
     const executeScroll = () => window.scrollTo(0, 0);
     
     const keyPress = (e) => {
