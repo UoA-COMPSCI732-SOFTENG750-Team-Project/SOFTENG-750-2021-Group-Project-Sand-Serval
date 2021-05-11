@@ -18,7 +18,7 @@ function AppContextProvider({ children }) {
     //         },
     //     ],
      });
-    const [user, setUser] = useStateWithCallback(null);
+    const [user, setUser] = useStateWithCallback({});
 
     const [socket, setSocket] = useState(null);
 
@@ -59,9 +59,13 @@ function AppContextProvider({ children }) {
     }
 
     useEffect(() => {
+        if (user.name === undefined) {
+            return;
+        }
+
         const socket = socketIOClient();
         setSocket(socket);
-    }, [user]);
+    }, [user.name]);
 
     useEffect(() => {
         if (!socket) {
