@@ -68,7 +68,7 @@ function AppContextProvider({ children }) {
             return;
         }
 
-        socket.on("update", (userName, newTimetable) => {
+        const updateHandler = (userName, newTimetable) => {
             let newGroupTimetables = updateTimetable(event.timetable, userName, newTimetable.map(newTimetable => {
                 return {
                     startDate: new Date(newTimetable.startDate),
@@ -76,8 +76,11 @@ function AppContextProvider({ children }) {
                 }
             }));
             setEvent({ ...event, timetable: newGroupTimetables});
-        });
-        socket.emit("eventid", event._id);
+        };
+        socket.on('update', updateHandler);
+        socket.emit('eventid', event._id);
+
+        return () => socket.off('update', updateHandler);
     }, [socket, event.timetable]);
 
     async function goToEvent(eventId) {
