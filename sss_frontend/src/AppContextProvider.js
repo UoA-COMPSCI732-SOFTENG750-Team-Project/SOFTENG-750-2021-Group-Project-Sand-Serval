@@ -45,7 +45,17 @@ function AppContextProvider({ children }) {
             throw new Error('Name and password don\'t matches');
         }
 
-        setUser({name});
+        let body = await res.json()
+        setUser({
+            name,
+            timetable: body.timetable.map(raw => {
+                return {
+                    id: raw._id,
+                    startDate: new Date(raw.startDate),
+                    endDate: new Date(raw.endDate)
+                };
+            })
+        });
     }
 
     useEffect(() => {
@@ -62,13 +72,13 @@ function AppContextProvider({ children }) {
             let newGroupTimetables = updateTimetable(event.timetable, userName, newTimetable.map(newTimetable => {
                 return {
                     startDate: new Date(newTimetable.startDate),
-                    endDate: new Date(newTimetable. endDate)
+                    endDate: new Date(newTimetable.endDate)
                 }
             }));
             setEvent({ ...event, timetable: newGroupTimetables});
         });
         socket.emit("eventid", event._id);
-    }, [socket, event.timetable])
+    }, [socket, event.timetable]);
 
     async function goToEvent(eventId) {
         let res = await fetch(`/api/events/${eventId}`);
@@ -104,7 +114,14 @@ function AppContextProvider({ children }) {
 
         await new Promise(resolve => {
             setUser({
-                name: body.name
+                name: body.name,
+                timetable: body.timetable.map(raw => {
+                    return {
+                        id: raw._id,
+                        startDate: new Date(raw.startDate),
+                        endDate: new Date(raw.endDate)
+                    };
+                })
             }, resolve);
         });
 

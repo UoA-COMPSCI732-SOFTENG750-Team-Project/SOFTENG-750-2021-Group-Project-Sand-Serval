@@ -20,9 +20,11 @@ const appendLeadingZeroes = (n) =>{
 };
 
 const bestTime = (e) => {
-    if (e.startDate == null) {
+    if (e.length === 0) {
         return "None"
     } else {
+        try {
+
         let i;
         let userNum = 0;
         let userIndex = 0;
@@ -39,6 +41,10 @@ const bestTime = (e) => {
         let starttime = appendLeadingZeroes(start.getDate()) + '-' + months[start.getMonth()] + " " + appendLeadingZeroes(start.getHours()) + ':' + appendLeadingZeroes(start.getMinutes());
         let endtime = appendLeadingZeroes(end.getDate()) + '-' + months[end.getMonth()] + " " + appendLeadingZeroes(end.getHours()) + ':' + appendLeadingZeroes(end.getMinutes());
         return starttime + " to " + endtime + " | " + eventUser + " is/are avaliable";
+        }
+        catch (error) {
+            return 'None'
+        }
     }
 }
 export default function Timetable() {
@@ -100,7 +106,7 @@ export default function Timetable() {
             <Typography variant="h3" align={'center'} className={styles.greeting}>Welcome to the event [{event.name}], {user.name} </Typography>
             <Divider />
             <Typography variant="h6" align={'center'}>The best time would be: <br/> </Typography>
-            <Typography variant="h6" align={'center'} color="secondary"className={styles.bestTime}>{besttime} </Typography>
+            <Typography variant="h6" align={'center'} color="secondary" className={styles.bestTime}>{besttime} </Typography>
 
             {mode === MODE.USER ? <UserTimetable/> : <GroupTimetable/>}
         </>

@@ -49,6 +49,12 @@ export default function Home(props) {
     // console.log(typeof(from));
     const executeScroll = () => window.scrollTo(0, 0);
     
+    const keyPress = (e) => {
+        if (e.keyCode === 13) {
+            extendCreateEvent() ; executeScroll();
+        }
+    }
+
     return (
         <Container className={styles.Container} >
             <div>
@@ -62,9 +68,9 @@ export default function Home(props) {
                        defaultValue=""
                        required 
                        label="Enter Event Name:" 
+                       onKeyDown={keyPress}
                        onChange={(event) => {
                            setName(event.target.value); 
-                        //    console.log(event.target.value); 
                            setError(null)
                         }}
                         inputProps={{min: 0, style: { textAlign: 'center'}}} 
@@ -73,15 +79,13 @@ export default function Home(props) {
             </TextField>
             
             
-            {/* <Wrapper/> */}
             <div className={styles.midSection}>
                 <div className={styles.dates} >
                     <Typography 
                         variant="h5" 
                         color='inherit'
                         className={styles.chooseDate}
-                        > 
-
+                    >
                         Choose Dates
                     </Typography>
                     <DateRange
