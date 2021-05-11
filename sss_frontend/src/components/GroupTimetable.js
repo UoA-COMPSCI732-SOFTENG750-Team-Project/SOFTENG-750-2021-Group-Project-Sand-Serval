@@ -85,7 +85,9 @@ const Appointment = (prop) => {
 };
 
 const AppointmentTooltipContent = ({appointmentData}) => {
-    return <p>Available: {appointmentData.users.join(', ')}.</p>
+    let users = [...appointmentData.users];
+    users.sort();
+    return <p>Available: {users.join(', ')}.</p>
 }
 
 export default GroupTimetable;

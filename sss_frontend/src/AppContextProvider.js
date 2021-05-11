@@ -18,7 +18,7 @@ function AppContextProvider({ children }) {
     //         },
     //     ],
      });
-    const [user, setUser] = useStateWithCallback(null);
+    const [user, setUser] = useStateWithCallback({});
 
     const [socket, setSocket] = useState(null);
 
@@ -59,9 +59,13 @@ function AppContextProvider({ children }) {
     }
 
     useEffect(() => {
+        if (user.name === undefined) {
+            return;
+        }
+
         const socket = socketIOClient();
         setSocket(socket);
-    }, [user]);
+    }, [user.name]);
 
     useEffect(() => {
         if (!socket) {
@@ -102,8 +106,8 @@ function AppContextProvider({ children }) {
 
     function createGroupTimetables(users) {
         let groupTimetables = [];
-        for (let user in users) {
-            groupTimetables = updateTimetable(groupTimetables, user, users[user].timetable.map(slot => {
+        for (let user of users) {
+            groupTimetables = updateTimetable(groupTimetables, user.name, user.timetable.map(slot => {
                 return {
                     startDate: new Date(slot.startDate),
                     endDate: new Date(slot.endDate),
@@ -197,7 +201,7 @@ function AppContextProvider({ children }) {
 }
 
 // Variant: `newTimetables`, `newGroupTimetables` contain no overlap
-const updateTimetable = (groupTimetables, userName, newTimetables) => {
+export const updateTimetable = (groupTimetables, userName, newTimetables) => {
     let result = [];
 
     let newGroupTimetables = [];
@@ -211,7 +215,26 @@ const updateTimetable = (groupTimetables, userName, newTimetables) => {
             newGroupTimetables.push(groupTimetable);
         }
     }
-
+    if (newGroupTimetables.length !== 0) {
+        // If slot next to each other, merge them 
+        newGroupTimetables.sort((slot1, slot2) => slot1.startDate.getTime() - slot2.startDate.getTime());
+        let mergedNewGroupTimetables = [];
+        let currentSlot = newGroupTimetables[0];
+        for (var i = 1; i < newGroupTimetables.length; i++) {
+            // if next to then we update current slot
+            if (currentSlot.endDate.getTime() === newGroupTimetables[i].startDate.getTime() && JSON.stringify(currentSlot.users) === JSON.stringify(newGroupTimetables[i].users)) {
+                currentSlot.endDate = newGroupTimetables[i].endDate;
+                continue;
+            }
+            mergedNewGroupTimetables.push(currentSlot);
+            currentSlot = newGroupTimetables[i];
+            // if not then put current into merged. put [i] into current
+        }
+        mergedNewGroupTimetables.push(currentSlot);
+        newGroupTimetables = mergedNewGroupTimetables;
+    }
+    
+    
     // Find a match for one newTimetable each loop. If there is no match then create new group slot
     while (newTimetables.length !== 0) {
         let newTimetable = newTimetables.pop();

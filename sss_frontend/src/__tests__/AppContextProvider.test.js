@@ -1,12 +1,13 @@
-import {split} from '../AppContextProvider';
+import {split, updateTimetable} from '../AppContextProvider';
+
+const date200 = new Date(200000000000);
+const date250 = new Date(250000000000);
+const date300 = new Date(300000000000);
+const date350 = new Date(350000000000);
+const date400 = new Date(400000000000);
+const date500 = new Date(500000000000);
 
 describe('Test `split(timeSlot, ...splitDates)', () => {
-    const date200 = new Date(200000000000);
-    const date250 = new Date(250000000000);
-    const date300 = new Date(300000000000);
-    const date400 = new Date(400000000000);
-    const date500 = new Date(500000000000);
-
     let timeSlot;
     let timeSlotWithUsers;
 
@@ -19,7 +20,7 @@ describe('Test `split(timeSlot, ...splitDates)', () => {
         timeSlotWithUsers = {
             ...timeSlot,
             users: []
-        }
+        };
     })
 
     it('1 split date within time slot', () => {
@@ -71,5 +72,73 @@ describe('Test `split(timeSlot, ...splitDates)', () => {
         let result = split(timeSlotWithUsers, date300)
         expect(result[0].users).not.toBe(result[1].users);
         expect(result[0].endDate).not.toBe(result[1].startDate);
+    });
+
+    
+});
+
+describe('Test `updateTimetable(groupTimetables, users, newTimetables)', () => {
+    let emptyGroupTimetables;
+    let groupTimetables;
+    let newTimetables1;
+    let newTimetables2;
+
+    let user1 = "1";
+    let user2 = "2";
+
+    beforeEach(() => {
+        emptyGroupTimetables = [];
+
+        groupTimetables = [{
+            startDate: date250,
+            endDate: date350,
+            users: [user2],
+        }];
+
+        newTimetables1 = [{
+            startDate: date300,
+            endDate: date400,
+        }];
+
+        newTimetables2 = [{
+            startDate: date400,
+            endDate: date500,
+        }];
+    });
+
+    it('Adding to an empty group timetable', () => {
+        let result = updateTimetable(emptyGroupTimetables, user1, newTimetables1);
+        expect(result.length).toBe(1);
+        expect(result[0]).toStrictEqual({
+            users: [user1],
+            startDate: date300,
+            endDate: date400,
+        });
+    });
+
+    it('Adding different users with no overlap', () => {
+        let result = updateTimetable(groupTimetables, user1, newTimetables2);
+        expect(result.length).toBe(2);
+    });
+
+    it('Adding different users with overlap', () => {
+        let result = updateTimetable(groupTimetables, user1, newTimetables1);
+        expect(result.length).toBe(3);
+    });
+
+    it('Check if slot is merge back after broken out from last test', () => {
+        let newGroupTimetables = updateTimetable(groupTimetables, user1, newTimetables1);
+        let result = updateTimetable(newGroupTimetables, user1, []);
+        expect(result.length).toBe(1);
+    });
+
+    it('User change their timetable', () => {
+        let result = updateTimetable(groupTimetables, user2, newTimetables1);
+        expect(result.length).toBe(1);
+        expect(result[0]).toStrictEqual({
+            users: [user2],
+            startDate: date300,
+            endDate: date400,
+        });
     });
 });
