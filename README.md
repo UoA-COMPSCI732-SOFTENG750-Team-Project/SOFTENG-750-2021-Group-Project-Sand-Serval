@@ -24,24 +24,6 @@ This is an web app developed by [Wilson](https://github.com/WilsonBaker), [Tudor
 ## Important Note for the live site:
 It is working but only for the frontend, we haven't set up the backend to the server so the frontend will NOT work, run the following command to check on your local machine. 
 
-# How to start the frontend
-
-### Make sure npm, nodejs are installed
-
-<br>
-Go to termial, make sure you are at root folder<br>
-Run follwing commands <br>
-
-Note if your npm version is 7+ then run npm update, otherwise you could ignore that for the time sake<br>
-```
-cd sss_frontend
-npm install 
-npm update
-npm start
-```
-
-Then there should be localhost coming up and test it out!
-
 # How to start the backend
 
 ### Make sure npm, nodejs, and mongoDb are installed
@@ -53,9 +35,26 @@ Run follwing commands <br>
 ```
 cd sss_backend
 npm install
-npm run start
+npm start
 ```
 Then you will see the server is listening on port 3001！
+
+# How to start the frontend
+
+### Make sure npm, nodejs are installed
+
+<br>
+Go to termial, make sure you are at root folder<br>
+Run follwing commands <br>
+
+```
+cd sss_frontend
+npm install 
+npm start
+```
+Note you might encounter chokidar issue when running npm start, try run npm update if that exist. DON'T run npm update unless you see that error!<br>
+
+Then there should be localhost coming up and test it out!
 
 # Here are some screenshots:
 Home page:
