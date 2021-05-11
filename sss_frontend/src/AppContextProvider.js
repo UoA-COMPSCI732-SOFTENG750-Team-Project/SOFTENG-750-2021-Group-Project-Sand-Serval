@@ -201,7 +201,7 @@ function AppContextProvider({ children }) {
 }
 
 // Variant: `newTimetables`, `newGroupTimetables` contain no overlap
-const updateTimetable = (groupTimetables, userName, newTimetables) => {
+export const updateTimetable = (groupTimetables, userName, newTimetables) => {
     let result = [];
 
     let newGroupTimetables = [];
@@ -217,8 +217,7 @@ const updateTimetable = (groupTimetables, userName, newTimetables) => {
     }
     if (newGroupTimetables.length !== 0) {
         // If slot next to each other, merge them 
-        newGroupTimetables.sort((slot1, slot2) => slot2.startDate.getTime() - slot1.startDate.getTime());
-        // console.log(newGroupTimetables);
+        newGroupTimetables.sort((slot1, slot2) => slot1.startDate.getTime() - slot2.startDate.getTime());
         let mergedNewGroupTimetables = [];
         let currentSlot = newGroupTimetables[0];
         for (var i = 1; i < newGroupTimetables.length; i++) {

@@ -1,21 +1,15 @@
-import {split} from '../AppContextProvider';
+import {split, updateTimetable} from '../AppContextProvider';
+
+const date200 = new Date(200000000000);
+const date250 = new Date(250000000000);
+const date300 = new Date(300000000000);
+const date350 = new Date(350000000000);
+const date400 = new Date(400000000000);
+const date500 = new Date(500000000000);
 
 describe('Test `split(timeSlot, ...splitDates)', () => {
-    const date200 = new Date(200000000000);
-    const date250 = new Date(250000000000);
-    const date300 = new Date(300000000000);
-    const date400 = new Date(400000000000);
-    const date500 = new Date(500000000000);
-
     let timeSlot;
     let timeSlotWithUsers;
-
-    // let groupTimetables;
-    // let user1 = "1";
-    // let user2 = "2";
-    // let user3 = "3";
-
-    // let newTimetables;
 
     beforeEach(() => {
         timeSlot = {
@@ -27,17 +21,6 @@ describe('Test `split(timeSlot, ...splitDates)', () => {
             ...timeSlot,
             users: []
         };
-
-        // groupTimetables = [{
-        //     endDate: date400,
-        //     startDate: date200,
-        //     users: [user2],
-        // }];
-
-        // newTimetables = [{
-
-        // }];
-
     })
 
     it('1 split date within time slot', () => {
@@ -94,37 +77,68 @@ describe('Test `split(timeSlot, ...splitDates)', () => {
     
 });
 
-// describe('Test `updateTimetable(groupTimetables, users, newTimetables)', () => {
-//     const date200 = new Date(200000000000);
-//     const date250 = new Date(250000000000);
-//     const date300 = new Date(300000000000);
-//     const date400 = new Date(400000000000);
-//     const date500 = new Date(500000000000);
+describe('Test `updateTimetable(groupTimetables, users, newTimetables)', () => {
+    let emptyGroupTimetables;
+    let groupTimetables;
+    let newTimetables1;
+    let newTimetables2;
 
-//     let groupTimetables;
-//     let user1 = "1";
-//     let user2 = "2";
-//     let user3 = "3";
+    let user1 = "1";
+    let user2 = "2";
 
-//     let newTimetables;
+    beforeEach(() => {
+        emptyGroupTimetables = [];
 
-//     beforeEach(() => {
+        groupTimetables = [{
+            startDate: date250,
+            endDate: date350,
+            users: [user2],
+        }];
 
-//         groupTimetables = [{
-//             endDate: date400,
-//             startDate: date200,
-//             users: [user2],
-//         }];
+        newTimetables1 = [{
+            startDate: date300,
+            endDate: date400,
+        }];
 
-//         newTimetables = [{
+        newTimetables2 = [{
+            startDate: date400,
+            endDate: date500,
+        }];
+    });
 
-//         }];
+    it('Adding to an empty group timetable', () => {
+        let result = updateTimetable(emptyGroupTimetables, user1, newTimetables1);
+        expect(result.length).toBe(1);
+        expect(result[0]).toStrictEqual({
+            users: [user1],
+            startDate: date300,
+            endDate: date400,
+        });
+    });
 
-//     })
+    it('Adding different users with no overlap', () => {
+        let result = updateTimetable(groupTimetables, user1, newTimetables2);
+        expect(result.length).toBe(2);
+    });
 
-//     it('Check if the result is not empty and does not get wrong users', () => {
-//         let result = updateTimetable(groupTimetables, user1, newTimetables);
-//         expect(result.toBeTruthy());
-//         expect(result[0].users).nottoBe(user1);
-//     })
-// });
+    it('Adding different users with overlap', () => {
+        let result = updateTimetable(groupTimetables, user1, newTimetables1);
+        expect(result.length).toBe(3);
+    });
+
+    it('Check if slot is merge back after broken out from last test', () => {
+        let newGroupTimetables = updateTimetable(groupTimetables, user1, newTimetables1);
+        let result = updateTimetable(newGroupTimetables, user1, []);
+        expect(result.length).toBe(1);
+    });
+
+    it('User change their timetable', () => {
+        let result = updateTimetable(groupTimetables, user2, newTimetables1);
+        expect(result.length).toBe(1);
+        expect(result[0]).toStrictEqual({
+            users: [user2],
+            startDate: date300,
+            endDate: date400,
+        });
+    });
+});
