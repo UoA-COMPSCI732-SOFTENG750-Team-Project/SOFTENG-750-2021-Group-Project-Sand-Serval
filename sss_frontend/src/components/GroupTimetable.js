@@ -19,11 +19,25 @@ const GroupTimetable = () => {
     const {event} = useContext(AppContext);
     const [currentDate, setCurrentDate] = useNavigator(event.dates[0], event.dates[1]);
 
+    const getUserCounts = (e) => {
+        let users = new Set();
+        for (let i=0; i<e.length; i++) {
+            for (let j=0; j<e[i].users.length; j++){
+                users.add(e[i].users[j]) ;
+            }
+        }
+        // console.log(users.size);
+        return users.size;
+    };
+
     let colorInterpolator = interpolateRgb('white', 'rgb(100, 181, 246)');
     const context = {
         event,
         getColor: numberOfAvailable => {
-            return colorInterpolator(numberOfAvailable / event.userCount);
+            let userCounts = getUserCounts(event.timetable);
+            // console.log(userCounts, numberOfAvailable);
+
+            return colorInterpolator(  numberOfAvailable / userCounts );
         }
     };
 
