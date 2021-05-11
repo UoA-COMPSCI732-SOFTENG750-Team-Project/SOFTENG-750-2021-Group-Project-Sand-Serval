@@ -215,7 +215,27 @@ const updateTimetable = (groupTimetables, userName, newTimetables) => {
             newGroupTimetables.push(groupTimetable);
         }
     }
-
+    if (newGroupTimetables.length !== 0) {
+        // If slot next to each other, merge them 
+        newGroupTimetables.sort((slot1, slot2) => slot2.startDate.getTime() - slot1.startDate.getTime());
+        // console.log(newGroupTimetables);
+        let mergedNewGroupTimetables = [];
+        let currentSlot = newGroupTimetables[0];
+        for (var i = 1; i < newGroupTimetables.length; i++) {
+            // if next to then we update current slot
+            if (currentSlot.endDate.getTime() === newGroupTimetables[i].startDate.getTime() && JSON.stringify(currentSlot.users) === JSON.stringify(newGroupTimetables[i].users)) {
+                currentSlot.endDate = newGroupTimetables[i].endDate;
+                continue;
+            }
+            mergedNewGroupTimetables.push(currentSlot);
+            currentSlot = newGroupTimetables[i];
+            // if not then put current into merged. put [i] into current
+        }
+        mergedNewGroupTimetables.push(currentSlot);
+        newGroupTimetables = mergedNewGroupTimetables;
+    }
+    
+    
     // Find a match for one newTimetable each loop. If there is no match then create new group slot
     while (newTimetables.length !== 0) {
         let newTimetable = newTimetables.pop();

@@ -10,6 +10,13 @@ describe('Test `split(timeSlot, ...splitDates)', () => {
     let timeSlot;
     let timeSlotWithUsers;
 
+    // let groupTimetables;
+    // let user1 = "1";
+    // let user2 = "2";
+    // let user3 = "3";
+
+    // let newTimetables;
+
     beforeEach(() => {
         timeSlot = {
             startDate: date200,
@@ -19,7 +26,18 @@ describe('Test `split(timeSlot, ...splitDates)', () => {
         timeSlotWithUsers = {
             ...timeSlot,
             users: []
-        }
+        };
+
+        // groupTimetables = [{
+        //     endDate: date400,
+        //     startDate: date200,
+        //     users: [user2],
+        // }];
+
+        // newTimetables = [{
+
+        // }];
+
     })
 
     it('1 split date within time slot', () => {
@@ -72,4 +90,41 @@ describe('Test `split(timeSlot, ...splitDates)', () => {
         expect(result[0].users).not.toBe(result[1].users);
         expect(result[0].endDate).not.toBe(result[1].startDate);
     });
+
+    
 });
+
+// describe('Test `updateTimetable(groupTimetables, users, newTimetables)', () => {
+//     const date200 = new Date(200000000000);
+//     const date250 = new Date(250000000000);
+//     const date300 = new Date(300000000000);
+//     const date400 = new Date(400000000000);
+//     const date500 = new Date(500000000000);
+
+//     let groupTimetables;
+//     let user1 = "1";
+//     let user2 = "2";
+//     let user3 = "3";
+
+//     let newTimetables;
+
+//     beforeEach(() => {
+
+//         groupTimetables = [{
+//             endDate: date400,
+//             startDate: date200,
+//             users: [user2],
+//         }];
+
+//         newTimetables = [{
+
+//         }];
+
+//     })
+
+//     it('Check if the result is not empty and does not get wrong users', () => {
+//         let result = updateTimetable(groupTimetables, user1, newTimetables);
+//         expect(result.toBeTruthy());
+//         expect(result[0].users).nottoBe(user1);
+//     })
+// });
