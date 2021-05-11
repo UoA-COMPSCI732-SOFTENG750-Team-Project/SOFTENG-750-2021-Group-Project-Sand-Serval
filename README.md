@@ -99,4 +99,5 @@ If you open the link with mobile, choose some event and close your phone for aro
 # Sprint planning and retro
 We sort of used the scrum methodology for our project, where all of us sit down, discuss the issues and male them as story points, you can see the porject board with this link<br>
 https://github.com/UoA-COMPSCI732-SOFTENG750-Team-Project/SOFTENG-750-2021-Group-Project-Sand-Serval/projects/1 <br>
-Besides, we have our [meeting minutes](https://drive.google.com/file/d/1S729zHs9FiUQpICKNURghnnr4JKvFXTF/view?usp=sharing) for the project, although it is written after we realised we need to include them : (
+Besides, we have our [meeting minutes](https://drive.google.com/file/d/1S729zHs9FiUQpICKNURghnnr4JKvFXTF/view?usp=sharing) for the project, although it is written after we realised we need to include them <br>
+: (
