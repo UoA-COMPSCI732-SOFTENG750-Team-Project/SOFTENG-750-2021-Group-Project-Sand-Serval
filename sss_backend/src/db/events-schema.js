@@ -2,9 +2,15 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
+ const timetableSchema = new Schema({
+     startDate: Date,
+     endDate: Date
+ })
+
 const usersSchema = new Schema({
     name: { type: String, required: true},
-    password: String
+    password: String,
+    timetable: [timetableSchema]
 })
 
 const eventsSchema = new Schema({

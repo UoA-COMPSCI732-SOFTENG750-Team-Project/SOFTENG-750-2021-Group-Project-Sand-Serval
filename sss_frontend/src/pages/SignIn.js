@@ -21,6 +21,11 @@ export default function SignIn() {
             .catch(e => window.alert(e.message));
     };
 
+    const keyPress = (e) => {
+        if (e.keyCode === 13) {
+            extendedSignIn();
+        }
+    }
     return (
         <section className={styles.signInContainer}>
             <Typography variant="h5">Enter your name to see "{event.name}"</Typography>
@@ -30,6 +35,7 @@ export default function SignIn() {
                 <InputLabel htmlFor="name"><Typography variant="h6">Name:</Typography></InputLabel>
                 <TextField
                     value={name}
+                    onKeyDown={keyPress}
                     onChange={event => setName(event.target.value)}
                     id="name"
                     label="Enter Your Name:" 
@@ -42,6 +48,7 @@ export default function SignIn() {
                 <InputLabel htmlFor="password"><Typography variant="h6">Password:</Typography></InputLabel>
                 <TextField
                     value={password}
+                    onKeyDown={keyPress}
                     onChange={event => setPassword(event.target.value)}
                     id="password"
                     label="Optional" 
@@ -50,7 +57,7 @@ export default function SignIn() {
             </section>
 
             <section className={styles.signInSection}>
-                <Button variant="contained" color="primary" onClick={extendedSignIn} style={{backgroundColor: "#4E9BFF", color: '#FFFFFF', marginTop: '20px'}}>
+                <Button variant="contained" color="primary"  onClick={extendedSignIn} style={{backgroundColor: "#4E9BFF", color: '#FFFFFF', marginTop: '20px'}}>
                     Sign In
                 </Button>
             </section>

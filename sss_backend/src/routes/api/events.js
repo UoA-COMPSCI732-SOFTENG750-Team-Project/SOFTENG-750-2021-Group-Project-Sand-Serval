@@ -56,12 +56,31 @@ router.get('/:id', async (req, res) => {
 router.post('/:id/sign-in', async (req, res) => {
     const { id } = req.params;
     const {name, password} = req.body;
-    if (!name) {
+
+    const event = await eventsDao.retrieveEvent(id);
+    if (!event) {
         res.sendStatus(HTTP_BAD_REQUEST);
         return;
     }
 
-    const event = await eventsDao.retrieveEvent(id);
+    // Signing in without sending name and password. This is intended for when user refreshes the tab.
+    if (!name) {
+        if (req.session.event === id) {
+            const dbUser = event.users.find(user => user.name === req.session.name);
+            if (dbUser) {
+                res.json({
+                    eventId: id,
+                    name: req.session.name,
+                    timetable: dbUser.timetable
+                });
+                return;
+            }
+        }
+
+        res.sendStatus(HTTP_BAD_REQUEST);
+        return;
+    }
+
     const dbUser = event.users.find(user => user.name === name);
     if (!dbUser) {
         event.users.push({
@@ -78,7 +97,11 @@ router.post('/:id/sign-in', async (req, res) => {
 
     req.session.event = id;
     req.session.name = name;
-    res.sendStatus(HTTP_OK);
+    res.json({
+        eventId: id,
+        name: name,
+        timetable: dbUser ? dbUser.timetable : []
+    });
 });
 
 export default router;

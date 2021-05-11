@@ -24,6 +24,7 @@ const bestTime = (e) => {
         return "None"
     } else {
         try {
+
         let i;
         let userNum = 0;
         let userIndex = 0;
