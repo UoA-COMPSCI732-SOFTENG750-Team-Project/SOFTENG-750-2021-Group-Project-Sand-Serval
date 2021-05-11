@@ -68,7 +68,7 @@ function AppContextProvider({ children }) {
             return;
         }
 
-        socket.on("update", (userName, newTimetable) => {
+        const updateHandler = (userName, newTimetable) => {
             let newGroupTimetables = updateTimetable(event.timetable, userName, newTimetable.map(newTimetable => {
                 return {
                     startDate: new Date(newTimetable.startDate),
@@ -76,9 +76,12 @@ function AppContextProvider({ children }) {
                 }
             }));
             setEvent({ ...event, timetable: newGroupTimetables});
-        });
-        socket.emit("eventid", event._id);
-    }, [socket, event.timetable]);
+        };
+        socket.on('update', updateHandler);
+        socket.emit('eventid', event._id);
+
+        return () => socket.off('update', updateHandler);
+    }, [socket, event]);
 
     async function goToEvent(eventId) {
         let res = await fetch(`/api/events/${eventId}`);
@@ -93,12 +96,21 @@ function AppContextProvider({ children }) {
             dates: body.dates.map(string => new Date(string)),
             from: new Date(body.from),
             to: new Date(body.to),
-            timetable: createGroupTimetables()
+            timetable: createGroupTimetables(body.users)
         });
     }
 
-    function createGroupTimetables() {
-        return [];
+    function createGroupTimetables(users) {
+        let groupTimetables = [];
+        for (let user in users) {
+            groupTimetables = updateTimetable(groupTimetables, user, users[user].timetable.map(slot => {
+                return {
+                    startDate: new Date(slot.startDate),
+                    endDate: new Date(slot.endDate),
+                }
+            }));
+        }
+        return groupTimetables;
     }
 
     async function isAuthenticated() {
