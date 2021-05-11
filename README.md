@@ -93,7 +93,7 @@ Here are some screenshots!<br>
 <img src="https://user-images.githubusercontent.com/41566813/117807422-ba53b100-b2af-11eb-9a51-037cdde8f116.jpg" width="400px"/>
 
 # Known issue
-If you open the link with mobile, choose some event and close your phone for around 10 second, the frontend will crash for unknown reason. So please close the tab on the mobile one you are not using it. 
+If you open the link with mobile, choose some event and close your phone for around 10 second, the frontend will crash for unknown reason. So please close the tab on the mobile one you are not using it. With some investigation, it might casued by the socket connection which we cannot fix for now : (
 <br>
 
 # Sprint planning and retro
