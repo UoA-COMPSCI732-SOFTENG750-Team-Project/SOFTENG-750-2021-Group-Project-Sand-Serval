@@ -20,7 +20,11 @@ app.use(function (req, res, next) {
 const httpServer = require("http").createServer(app);
 const options = { /* ... */ };
 const io = require("socket.io")(httpServer, options);
-var sessionMiddleware = session({ secret: crypto.randomBytes(48).toString('hex') })
+let sessionMiddleware = session({
+    secret: crypto.randomBytes(48).toString('hex'),
+    resave: false,
+    saveUninitialized: false
+});
 io.use(function(socket, next) {sessionMiddleware(socket.request, {}, next);});
 app.use(sessionMiddleware);
 
@@ -56,6 +60,10 @@ io.on("connection", async (socket) => {
     //Handle update of timetable
     socket.on("tableUpdate", async newTimetable => {
         const event = await eventsDao.retrieveEvent(session.event);
+        if (!event) {
+            return;
+        }
+
         const dbUser = event.users.find(user => user.name === session.name);
         dbUser.timetable = newTimetable;
         await event.save();
