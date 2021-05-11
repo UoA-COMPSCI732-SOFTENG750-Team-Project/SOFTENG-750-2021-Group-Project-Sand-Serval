@@ -1,5 +1,4 @@
 import {split} from '../AppContextProvider';
-import { updateTimetable } from '../AppContextProvider';
 
 describe('Test `split(timeSlot, ...splitDates)', () => {
     const date200 = new Date(200000000000);
@@ -11,12 +10,12 @@ describe('Test `split(timeSlot, ...splitDates)', () => {
     let timeSlot;
     let timeSlotWithUsers;
 
-    let groupTimetables;
-    let user1 = "1";
-    let user2 = "2";
-    let user3 = "3";
+    // let groupTimetables;
+    // let user1 = "1";
+    // let user2 = "2";
+    // let user3 = "3";
 
-    let newTimetables;
+    // let newTimetables;
 
     beforeEach(() => {
         timeSlot = {
@@ -29,15 +28,15 @@ describe('Test `split(timeSlot, ...splitDates)', () => {
             users: []
         };
 
-        groupTimetables = [{
-            endDate: date400,
-            startDate: date200,
-            users: [user2],
-        }];
+        // groupTimetables = [{
+        //     endDate: date400,
+        //     startDate: date200,
+        //     users: [user2],
+        // }];
 
-        newTimetables = [{
+        // newTimetables = [{
 
-        }];
+        // }];
 
     })
 
@@ -92,8 +91,40 @@ describe('Test `split(timeSlot, ...splitDates)', () => {
         expect(result[0].endDate).not.toBe(result[1].startDate);
     });
 
-    it('test updateTimetable', () => {
-        let result = updateTimetable(groupTimetables, user1, newTimetables)
-        expect(result[0])
-    })
+    
 });
+
+// describe('Test `updateTimetable(groupTimetables, users, newTimetables)', () => {
+//     const date200 = new Date(200000000000);
+//     const date250 = new Date(250000000000);
+//     const date300 = new Date(300000000000);
+//     const date400 = new Date(400000000000);
+//     const date500 = new Date(500000000000);
+
+//     let groupTimetables;
+//     let user1 = "1";
+//     let user2 = "2";
+//     let user3 = "3";
+
+//     let newTimetables;
+
+//     beforeEach(() => {
+
+//         groupTimetables = [{
+//             endDate: date400,
+//             startDate: date200,
+//             users: [user2],
+//         }];
+
+//         newTimetables = [{
+
+//         }];
+
+//     })
+
+//     it('Check if the result is not empty and does not get wrong users', () => {
+//         let result = updateTimetable(groupTimetables, user1, newTimetables);
+//         expect(result.toBeTruthy());
+//         expect(result[0].users).nottoBe(user1);
+//     })
+// });
