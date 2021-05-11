@@ -49,6 +49,12 @@ export default function Home(props) {
     // console.log(typeof(from));
     const executeScroll = () => window.scrollTo(0, 0);
     
+    const keyPress = (e) => {
+        if (e.keyCode === 13) {
+            extendCreateEvent() ; executeScroll();
+        }
+    }
+
     return (
         <Container className={styles.Container} >
             <div>
@@ -62,6 +68,7 @@ export default function Home(props) {
                        defaultValue=""
                        required 
                        label="Enter Event Name:" 
+                       onKeyDown={keyPress}
                        onChange={(event) => {
                            setName(event.target.value); 
                         //    console.log(event.target.value); 
