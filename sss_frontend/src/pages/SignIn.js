@@ -40,7 +40,8 @@ export default function SignIn() {
                     id="name"
                     label="Enter Your Name:" 
                     required 
-                    inputProps={{min: 0, style: { textAlign: 'center'}}} 
+                    inputProps={{min: 0, style: { textAlign: 'center'}}}
+                    autoFocus
                 />
             </section>
 
