@@ -106,8 +106,8 @@ function AppContextProvider({ children }) {
 
     function createGroupTimetables(users) {
         let groupTimetables = [];
-        for (let user in users) {
-            groupTimetables = updateTimetable(groupTimetables, user, users[user].timetable.map(slot => {
+        for (let user of users) {
+            groupTimetables = updateTimetable(groupTimetables, user.name, user.timetable.map(slot => {
                 return {
                     startDate: new Date(slot.startDate),
                     endDate: new Date(slot.endDate),
