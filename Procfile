@@ -1,1 +1,1 @@
-web: cd sss_frontend && npm run build && cd ../ && npm start
+web: cd sss_frontend && npm install && npm run build && cd ../ && npm install && npm start
