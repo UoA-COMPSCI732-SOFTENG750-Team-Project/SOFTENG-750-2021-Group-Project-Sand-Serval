@@ -1,0 +1,1 @@
+web: cd sss_frontend && npm run build && cd ../ && npm start
